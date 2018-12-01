@@ -17,7 +17,7 @@ use yii\validators\Validator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180623
  */
-class TimeFlagValidator extends Validator {
+class DateFlagValidator extends Validator {
 	
 	/** @var string формат даты */
 	public $format = 'Y-m-d H:i:s';
