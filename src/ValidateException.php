@@ -21,9 +21,13 @@ class ValidateException extends Exception {
 	 * @param Model $model
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(Model $model) {
+	public function __construct(Model $model, string $message=null) {
 		if (empty($model)) throw new \InvalidArgumentException('empty model');
-		parent::__construct(implode(",\n", $model->getErrorSummary(false)));
+		
+		$msg = $model->getErrorSummary(false);
+		if (!empty($message)) unshift($msg, $message);
+		
+		parent::__construct(implode(",\n", $msg));
 		$this->model = $model;
 	}
 	
