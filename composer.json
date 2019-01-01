@@ -26,8 +26,8 @@
 			"url" : "https://asset-packagist.org"
 		}
 	],
-	"homepage" : "https://gitlab.com/dicrtarasov/yii2-validate",
+	"homepage" : "https://gitlab.com/dicr/yii2-validate",
 	"support" : {
-		"source" : "https://gitlab.com/dicrtarasov/yii2-validate.git"
+		"source" : "https://gitlab.com/dicr/yii2-validate.git"
 	}
 }
