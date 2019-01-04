@@ -17,7 +17,7 @@ use yii\validators\Validator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180623
  */
-class DateFlagValidator extends Validator {
+class TimeFlagValidator extends Validator {
 
 	/** @var string формат даты */
 	public $format = 'Y-m-d H:i:s';
@@ -62,7 +62,7 @@ class DateFlagValidator extends Validator {
 			}
 		} elseif (is_string($val)) {
 			$val = trim($val);
-			if (in_array($val, ['', '0', 'no', 'false', 'off'])) {
+			if ($val == '' || in_array($val, ['0', 'no', 'false', 'off'])) {
 			    $model->{$attribute} = null;
 			} elseif (in_array($val, ['1', 'yes', 'true', 'on'])) {
 			    $model->{$attribute} = $this->format();

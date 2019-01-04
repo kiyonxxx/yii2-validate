@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace dicr\validate;
 
 use yii\widgets\InputWidget;
@@ -6,12 +6,12 @@ use yii\helpers\Html;
 
 /**
  * Ввиджет поля ввода datetime с типом checkbox.
- * 
+ *
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180702
  */
-class DateFlagWidget extends InputWidget {
-	
+class TimeFlagWidget extends InputWidget {
+
 	/** @var string datetime формат */
 	public $format = null;
 
@@ -21,7 +21,7 @@ class DateFlagWidget extends InputWidget {
 	 */
 	public function run() {
 		$this->options['labelOptions'] = [
-			'class' => 'control-label', 
+			'class' => 'control-label',
 			'style' => 'font-weight: normal'
 		];
 
@@ -31,7 +31,7 @@ class DateFlagWidget extends InputWidget {
 			$this->options['label'] = $val ? \Yii::$app->formatter->asDatetime($val, $this->format) : '';
 			return Html::activeCheckbox($this->model, $this->attribute, $this->options);
 		}
-		
+
 		$this->options['value'] = $this->value ?: date('Y-m-d H:i:s');
 		$this->options['label'] = $this->value ? \Yii::$app->formatter->asDatetime($this->value, $this->format) : '';
 		return Html::checkbox($this->name, $this->value, $this->options);
