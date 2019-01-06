@@ -10,11 +10,11 @@ use yii\base\Model;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180504
  */
-class ValidateError extends Exception {
-	
+class ValidateException extends Exception {
+
 	/** @var \yii\base\Model */
 	protected $model;
-	
+
 	/**
 	 * Конструктор.
 	 *
@@ -24,12 +24,12 @@ class ValidateError extends Exception {
 	public function __construct(Model $model, string $message=null) {
 		if (empty($model)) throw new \InvalidArgumentException('empty model');
 		$this->model = $model;
-		
+
 		$msg = ($message ?: get_class($model)).': '.implode('; ', $model->getErrorSummary(false));
-		
+
 		parent::__construct($msg);
 	}
-	
+
 	/**
 	 * Возвращает модель.
 	 *
