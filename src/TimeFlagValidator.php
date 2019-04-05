@@ -23,7 +23,7 @@ class TimeFlagValidator extends Validator
 	public $format = 'Y-m-d H:i:s';
 
 	/** @var bool */
-	public $skipOnEmpty = true;
+	public $skipOnEmpty = false;
 
 	/** @var string сообщение об ошибке */
 	public $message = 'Некорретное значение флага/даты';
