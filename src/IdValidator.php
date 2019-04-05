@@ -14,6 +14,9 @@ class IdValidator extends Validator
     /** @var string */
     public $message = 'Некорретное значение id';
 
+    /** @var bool */
+    public $skipOnEmpty = false;
+
     /**
      * {@inheritDoc}
      * @see \yii\validators\Validator::validateAttribute()
@@ -22,16 +25,14 @@ class IdValidator extends Validator
     {
         $value = $model->{$attribute};
         if ($this->isEmpty($value) || empty($value)) {
-            $model->{$attribute} = null;
+            $this->addError($model, $attribute, $this->message);
         } elseif (is_numeric($value)) {
             if (!preg_match('~^\d+~$', ''.$value)) {
                 $this->addError($model, $attribute, $this->message);
             } else {
                 $value = (int)$value;
-                if ($value < 0) {
+                if ($value < 1) {
                     $this->addError($model, $attribute, $this->message);
-                } elseif ($value === 0) {
-                    $model->{$attribute} = null;
                 } else {
                     $model->{$attribute} = $value;
                 }
