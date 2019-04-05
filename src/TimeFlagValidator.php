@@ -17,13 +17,16 @@ use yii\validators\Validator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180623
  */
-class TimeFlagValidator extends Validator {
-
+class TimeFlagValidator extends Validator
+{
 	/** @var string формат даты */
 	public $format = 'Y-m-d H:i:s';
 
 	/** @var bool */
 	public $skipOnEmpty = true;
+
+	/** @var string сообщение об ошибке */
+	public $message = 'Некорретное значение флага/даты';
 
 	/**
 	 * Форматирует дату
@@ -31,7 +34,8 @@ class TimeFlagValidator extends Validator {
 	 * @param int $time значение
 	 * @return string
 	 */
-	protected function format(int $time=0) {
+	protected function format(int $time=0)
+	{
 	    return date($this->format, $time ?: null);
 	}
 
@@ -39,19 +43,15 @@ class TimeFlagValidator extends Validator {
 	 * {@inheritDoc}
 	 * @see \yii\validators\Validator::validateAttribute()
 	 */
-	public function validateAttribute($model, $attribute) {
+	public function validateAttribute($model, $attribute)
+	{
 		$val = $model[$attribute] ?? null;
 
-		// null or not exists
-		if (!isset($val)) {
-		    return;
-		}
-
-		if (empty($val)) {
+		if ($this->isEmpty($val) || empty($val)) { // null, "", [], 0, false
 			$model->{$attribute} = null;
-		} elseif (is_bool($val)) {
+		} elseif ($val === true) {
 			$model->{$attribute} = $this->format();
-		} elseif (is_numeric("$val")) {
+		} elseif (is_numeric($val)) {
 			$val = (int)$val;
 			if (empty($val)) {
 			    $model->{$attribute} = null;
@@ -68,14 +68,14 @@ class TimeFlagValidator extends Validator {
 			    $model->{$attribute} = $this->format();
 			} else {
 				$tstamp = strtotime($val);
-				if (empty($tstamp)) {
-				    $this->addError($model, $attribute, 'Некорректное значение флага/даты: '.$val);
+				if ($tstamp <= 0) {
+				    $this->addError($model, $attribute, $this->message);
 				} else {
 				    $model->{$attribute} = $this->format($tstamp);
 				}
 			}
 		} else {
-			$this->addError($model, $attribute, 'Неизвестный тип значения');
+			$this->addError($model, $attribute, $this->message);
 		}
 	}
 }
