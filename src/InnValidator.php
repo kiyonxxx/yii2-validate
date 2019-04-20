@@ -75,10 +75,12 @@ class InnValidator extends Validator
      public function validateAttribute($model, $attribute)
      {
          try {
-             $value = self::parse($model->{$attribute});
-             if ($value === '') {
+             $value = self::parse((string)$model->{$attribute});
+             if ($value === null) {
                  throw new Exception($this->message ?: 'Пустое значение ИНН');
              }
+
+             $model->{$attribute} = $value;
          } catch (Exception $ex) {
              $this->addError($model, $attribute, $ex->getMessage());
          }
