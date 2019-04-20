@@ -9,7 +9,7 @@ use yii\base\ErrorException;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-trait Formatter
+trait PhoneFormatterTrait
 {
     /** @var string телефонный код страны по-умолчанию */
     public $phoneCountryCode = 7;
