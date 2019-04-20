@@ -17,7 +17,7 @@ class PhoneValidator extends Validator
      *
      * @param string $phone номер телефона в свободном формате
      * @throws Exception
-     * @return int цифры номера телефона
+     * @return int|null цифры номера телефона
      */
     public static function parse(string $phone)
     {

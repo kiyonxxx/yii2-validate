@@ -2,6 +2,7 @@
 namespace dicr\validate;
 
 use yii\validators\Validator;
+use yii\base\Exception;
 
 /**
  * Валидатор данных типа флаг со значениями null/datetime, который конвертирует значения типа true в текущее
@@ -29,15 +30,86 @@ class TimeFlagValidator extends Validator
 	public $message = 'Некорретное значение флага/даты';
 
 	/**
-	 * Форматирует дату
+	 * Парсит значение флага даты
 	 *
-	 * @param int $time значение
-	 * @return string
+	 * @param string $value
+	 * - false, 0, 'false', 'no', 'off' - null
+	 * - true, 1, 'true', 'yes', 'on' - current date
+	 * - int - unix timestamp
+	 * - string - date string
+	 *
+	 * @param string $format формат значения (даты/времени)
+	 * @throws Exception
+	 * @return null|string значение в виде даты
 	 */
-	protected function format(int $time=0)
-	{
-	    return date($this->format, $time ?: null);
-	}
+    public static function parse(string $value, string $format = 'Y-m-d H:i:s')
+    {
+        // empty
+        if (empty($value)) {
+            return null;
+        }
+
+        // boolean
+        if (is_bool($value)) {
+            return $value ? date($format) : null;
+        }
+
+        // spaces
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        // numeric
+        if (is_numeric($value)) {
+			$value = (int)$value;
+
+			if ($value < 0) {
+			    throw new Exception('Некорректное значение флага/даты');
+			}
+
+			if (empty($value)) {
+			    return null;
+			}
+
+			if ($value == 1) {
+			    return date($format);
+			}
+
+			return date($format, $value);
+        }
+
+        // string
+    	if (in_array($value, ['0', 'no', 'false', 'off'])) {
+    	    return null;
+    	}
+
+    	if (in_array($value, ['1', 'yes', 'true', 'on'])) {
+    	    return date($format);
+    	}
+
+		$value = strtotime($value);
+		if ($value <= 0) {
+		    throw new Exception('Некоректный форматы флага/даты');
+		}
+
+		return date($format, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \yii\validators\Validator::validateValue()
+     */
+    protected function validateValue($value)
+    {
+        try {
+            self::parse($value);
+        } catch (Exception $ex) {
+            return [$ex->getMessage()];
+        }
+
+        return null;
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -45,37 +117,10 @@ class TimeFlagValidator extends Validator
 	 */
 	public function validateAttribute($model, $attribute)
 	{
-		$val = $model[$attribute] ?? null;
-
-		if ($this->isEmpty($val) || empty($val)) { // null, "", [], 0, false
-			$model->{$attribute} = null;
-		} elseif ($val === true) {
-			$model->{$attribute} = $this->format();
-		} elseif (is_numeric($val)) {
-			$val = (int)$val;
-			if (empty($val)) {
-			    $model->{$attribute} = null;
-			} elseif ($val == 1) {
-			    $model->$attribute = $this->format();
-			} else {
-			    $model->{$attribute} = $this->format($val);
-			}
-		} elseif (is_string($val)) {
-			$val = trim($val);
-			if ($val == '' || in_array($val, ['0', 'no', 'false', 'off'])) {
-			    $model->{$attribute} = null;
-			} elseif (in_array($val, ['1', 'yes', 'true', 'on'])) {
-			    $model->{$attribute} = $this->format();
-			} else {
-				$tstamp = strtotime($val);
-				if ($tstamp <= 0) {
-				    $this->addError($model, $attribute, $this->message);
-				} else {
-				    $model->{$attribute} = $this->format($tstamp);
-				}
-			}
-		} else {
-			$this->addError($model, $attribute, $this->message);
-		}
+	    try {
+	        $model->{$attribute} = self::parse($model->{$attribute});
+	    } catch (Exception $ex) {
+	        $this->addError($model, $attribute, $this->message ?: $ex->getMessage());
+	    }
 	}
 }
