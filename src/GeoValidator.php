@@ -1,7 +1,6 @@
 <?php
 namespace dicr\validate;
 
-use function dicr\validate\GeoValidator\parse as trim;
 use yii\base\Exception;
 use yii\validators\Validator;
 
@@ -19,7 +18,7 @@ class GeoValidator extends Validator
      * @param string|null $value
      * @return float[]|null список email
      */
-    public static function parse($value)
+    public static function parse2($value)
     {
         $data = preg_split('~[\s\,]+~uism', trim($value), -1, PREG_SPLIT_NO_EMPTY);
         if (empty($data)) {
@@ -40,7 +39,7 @@ class GeoValidator extends Validator
     protected function validateValue($value)
     {
         try {
-            self::parse(trim($value));
+            static::parse(trim($value));
         } catch (Exception $ex) {
             return [$ex->getMessage()];
         }
@@ -57,7 +56,7 @@ class GeoValidator extends Validator
         try {
             $coords = $model->{$attribute};
             if (!is_array($coords)) {
-                $coords = self::parse($coords);
+                $coords = static::parse($coords);
             }
 
             if (empty($coords)) {
