@@ -13,6 +13,17 @@ use yii\validators\Validator;
 class EmailsValidator extends Validator
 {
     /**
+     * Парсит список Email из сроки
+     *
+     * @param string|null $value
+     * @return string[] список email
+     */
+    public static function parse($value)
+    {
+        return preg_split('~[\,\s]+~uism', trim($value), -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
      * {@inheritDoc}
      * @see \yii\validators\Validator::validateAttribute()
      */
@@ -21,7 +32,12 @@ class EmailsValidator extends Validator
         $emails = $model->{$attribute};
 
         if (!is_array($emails)) {
-            $emails = preg_split('~[\,\s]+~uism', trim($emails), -1, PREG_SPLIT_NO_EMPTY);
+            $emails = self::parse($emails);
+        }
+
+        if (empty($emails)) {
+            $this->addError($model, $attribute, 'Пустой список email-адресов');
+            return false;
         }
 
         $emailValidator = new EmailValidator([
