@@ -60,6 +60,13 @@ class TimeFlagValidator extends Validator
             return null;
         }
 
+        // предопределенные значения
+    	if (in_array($value, ['0', 'no', 'false', 'off'])) {
+    	    return null;
+    	} elseif (in_array($value, ['1', 'yes', 'true', 'on'])) {
+    	    return date($format);
+    	}
+
         // numeric
         if (is_numeric($value)) {
 			$value = (int)$value;
@@ -79,15 +86,7 @@ class TimeFlagValidator extends Validator
 			return date($format, $value);
         }
 
-        // string
-    	if (in_array($value, ['0', 'no', 'false', 'off'])) {
-    	    return null;
-    	}
-
-    	if (in_array($value, ['1', 'yes', 'true', 'on'])) {
-    	    return date($format);
-    	}
-
+        // сроковая дата
 		$value = strtotime($value);
 		if ($value <= 0) {
 		    throw new Exception('Некоректный форматы флага/даты');

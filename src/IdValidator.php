@@ -24,21 +24,26 @@ class IdValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         $value = $model->{$attribute};
+
         if ($this->isEmpty($value) || empty($value)) {
-            $this->addError($model, $attribute, $this->message);
-        } elseif (is_numeric($value)) {
-            if (!preg_match('~^\d+$~uism', ''.$value)) {
-                $this->addError($model, $attribute, $this->message);
-            } else {
-                $value = (int)$value;
-                if ($value < 1) {
-                    $this->addError($model, $attribute, $this->message);
-                } else {
-                    $model->{$attribute} = $value;
-                }
-            }
-        } else {
-            $this->addError($model, $attribute, $this->message);
+            $model->{$attribute} = null;
+            return;
         }
+
+        if (!preg_match('~^\d+$~uism', ''.$value)) {
+            return $this->addError($model, $attribute, $this->message);
+        }
+
+        $value = (int)$value;
+        if (empty($value)) {
+            $model->{$attribute} = null;
+            return;
+        }
+
+        if ($value < 0) {
+            return $this->addError($model, $attribute, $this->message);
+        }
+
+        $model->{$attribute} = $value;
     }
 }
