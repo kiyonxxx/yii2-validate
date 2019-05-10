@@ -12,6 +12,9 @@ use yii\validators\Validator;
  */
 class EmailsValidator extends Validator
 {
+	/** @var bool */
+    public $skipOnEmpty = true;
+
     /**
      * Парсит список Email из сроки
      *

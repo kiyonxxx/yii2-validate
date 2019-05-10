@@ -15,7 +15,7 @@ class IdValidator extends Validator
     public $message = 'Некорретное значение id';
 
     /** @var bool */
-    public $skipOnEmpty = false;
+    public $skipOnEmpty = true;
 
     /**
      * {@inheritDoc}

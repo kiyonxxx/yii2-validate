@@ -12,6 +12,9 @@ use yii\validators\Validator;
  */
 class InnValidator extends Validator
 {
+	/** @var bool */
+    public $skipOnEmpty = true;
+
     /**
      * Парсит значение ИНН
      *

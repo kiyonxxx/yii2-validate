@@ -12,7 +12,10 @@ use yii\validators\Validator;
  */
 class PhoneValidator extends Validator
 {
-    /**
+	/** @var bool */
+    public $skipOnEmpty = true;
+
+	/**
      * Парсит номер телефона
      *
      * @param string $phone номер телефона в свободном формате

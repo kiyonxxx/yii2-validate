@@ -12,6 +12,9 @@ use yii\validators\Validator;
  */
 class GeoValidator extends Validator
 {
+	/** @var bool */
+    public $skipOnEmpty = true;
+
     /**
      * Парсит координаты
      *

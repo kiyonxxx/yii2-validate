@@ -12,6 +12,9 @@ use yii\validators\DateValidator;
  */
 class DateTimeValidator extends DateValidator
 {
+	/** @var bool */
+    public $skipOnEmpty = true;
+
     /**
      * {@inheritDoc}
      * @see \yii\validators\DateValidator::validateAttribute()
