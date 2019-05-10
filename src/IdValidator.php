@@ -27,7 +27,7 @@ class IdValidator extends Validator
         if ($this->isEmpty($value) || empty($value)) {
             $this->addError($model, $attribute, $this->message);
         } elseif (is_numeric($value)) {
-            if (!preg_match('~^\d+~$', ''.$value)) {
+            if (!preg_match('~^\d+$~uism', ''.$value)) {
                 $this->addError($model, $attribute, $this->message);
             } else {
                 $value = (int)$value;
