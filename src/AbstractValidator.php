@@ -19,7 +19,7 @@ abstract class AbstractValidator extends Validator
      * @throws \Exception
      * @return mixed|null
      */
-    public abstract function parse($value);
+    abstract public static function parse($value);
 
     /**
      * {@inheritDoc}
