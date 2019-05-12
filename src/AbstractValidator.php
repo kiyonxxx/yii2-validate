@@ -28,7 +28,7 @@ abstract class AbstractValidator extends Validator
     protected function validateValue($value)
     {
         try {
-            self::parse($value);
+            static::parse($value);
         } catch (\Throwable $ex) {
             return [ $ex->getMessage(), ['value' => $value] ];
         }
