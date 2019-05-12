@@ -1,49 +1,58 @@
 <?php
 namespace dicr\validate;
 
-use yii\validators\Validator;
+use dicr\asset\AbstractValidator;
+use yii\base\Exception;
 
 /**
- * Валидация ссылок на ID
+ * Валидация ID
  *
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class IdValidator extends Validator
+class IdValidator extends AbstractValidator
 {
-    /** @var string */
-    public $message = 'Некорретное значение id';
-
     /** @var bool */
     public $skipOnEmpty = true;
 
     /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateAttribute()
+     * Парсит ID.
+     *
+     * @param int|string|null $id
+     * @throws Exception
+     * @return int|null
      */
-    public function validateAttribute($model, $attribute)
+    public static function parse($id)
     {
-        $value = $model->{$attribute};
-
-        if ($this->isEmpty($value) || empty($value)) {
-            $model->{$attribute} = null;
-            return;
+        if (is_null($id)) {
+            return null;
         }
 
-        if (!preg_match('~^\d+$~uism', ''.$value)) {
-            return $this->addError($model, $attribute, $this->message);
+        if (is_string($id)) {
+            $id = trim($id);
+            if ($id === '') {
+                return null;
+            }
+
+            if (!ctype_digit($id)) {
+                throw new Exception('Недопустимые символы');
+            }
+
+            $id = (int)$id;
         }
 
-        $value = (int)$value;
-        if (empty($value)) {
-            $model->{$attribute} = null;
-            return;
+        if (!is_int($id)) {
+            throw new Exception('Неизвестный тип значения' . $id);
         }
 
-        if ($value < 0) {
-            return $this->addError($model, $attribute, $this->message);
+        if ($id < 0) {
+            throw new Exception('Значение не может быть отрицательным');
         }
 
-        $model->{$attribute} = $value;
+        if (empty($id)) {
+            return null;
+        }
+
+        return $id;
     }
 }

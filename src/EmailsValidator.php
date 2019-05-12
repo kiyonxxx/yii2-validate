@@ -1,8 +1,8 @@
 <?php
 namespace dicr\validate;
 
+use dicr\asset\AbstractValidator;
 use yii\validators\EmailValidator;
-use yii\validators\Validator;
 
 /**
  * Валидатор E-Mail адресов через запятую
@@ -10,11 +10,8 @@ use yii\validators\Validator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class EmailsValidator extends Validator
+class EmailsValidator extends AbstractValidator
 {
-	/** @var bool */
-    public $skipOnEmpty = true;
-
     /**
      * Парсит список Email из сроки
      *
