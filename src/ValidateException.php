@@ -10,8 +10,8 @@ use yii\base\Model;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180504
  */
-class ValidateException extends Exception {
-
+class ValidateException extends Exception
+{
 	/** @var \yii\base\Model */
 	protected $model;
 
@@ -21,7 +21,8 @@ class ValidateException extends Exception {
 	 * @param Model $model
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(Model $model, string $message=null) {
+	public function __construct(Model $model, string $message=null)
+	{
 		if (empty($model)) throw new \InvalidArgumentException('empty model');
 		$this->model = $model;
 
@@ -35,7 +36,8 @@ class ValidateException extends Exception {
 	 *
 	 * @return \yii\base\Model
 	 */
-	public function getModel() {
+	public function getModel()
+	{
 		return $this->model;
 	}
 }

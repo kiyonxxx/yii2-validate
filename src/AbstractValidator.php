@@ -1,5 +1,5 @@
 <?php
-namespace dicr\asset;
+namespace dicr\validate;
 
 use yii\validators\Validator;
 

@@ -1,7 +1,6 @@
 <?php
 namespace dicr\validate;
 
-use dicr\asset\AbstractValidator;
 use yii\validators\EmailValidator;
 
 /**
