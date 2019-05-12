@@ -45,7 +45,7 @@ abstract class AbstractValidator extends Validator
         $value = $model->{$attribute};
 
         try {
-            $model->{$attribute} = self::parse($value);
+            $model->{$attribute} = static::parse($value);
         } catch (\Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
