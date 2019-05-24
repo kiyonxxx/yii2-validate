@@ -5,7 +5,7 @@ use yii\validators\DateValidator;
 
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
- * datetime-local в формат Y-m-d\TH:i:s
+ * datetime-local в формате Y-m-d\TH:i:s
  *
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
@@ -18,9 +18,10 @@ class DateTimeValidator extends DateValidator
      */
     public function validateAttribute($model, $attribute)
     {
-        // конвертируем значение с T в стандартное
-        if (is_string($model->{$attribute})) {
-            $model->{$attribute} = preg_replace('~^(.+?)T(.+?)$~uism', '${1} ${2}', $model->{$attribute});
+        // конвертируем значение из "Y-m-d\TH:i:s" в "Y-m-d H:i:s"
+        $matches = null;
+        if (is_string($model->{$attribute}) && preg_match('~^(.+?)T(.+?)$~uism', $model->{$attribute}, $matches)) {
+            $model->{$attribute} = $matches[1] . ' ' . $matches[2];
         }
 
         return parent::validateAttribute($model, $attribute);
