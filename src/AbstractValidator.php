@@ -27,8 +27,12 @@ abstract class AbstractValidator extends Validator
      */
     protected function validateValue($value)
     {
+        // парсим значение
         try {
-            static::parse($value);
+            $val = static::parse($value);
+            if ($val === null && !$this->skipOnEmpty) {
+                return ['Требуется значение значение'];
+            }
         } catch (\Throwable $ex) {
             return [ $ex->getMessage(), ['value' => $value] ];
         }
@@ -45,10 +49,12 @@ abstract class AbstractValidator extends Validator
         $value = $model->{$attribute};
 
         try {
-            $model->{$attribute} = static::parse($value);
+            $val = static::parse($value);
+            if ($val === null && !$this->skipOnEmpty) {
+                throw new \Exception('Требуется значение {attribute}');
+            }
         } catch (\Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
     }
-
 }

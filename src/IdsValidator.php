@@ -21,7 +21,7 @@ class IdsValidator extends AbstractValidator
      */
     public static function parse($ids)
     {
-        if (is_null($ids) || $ids === '') {
+        if (is_null($ids) || $ids === '' || $ids === []) {
             return [];
         }
 

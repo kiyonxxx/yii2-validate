@@ -9,10 +9,10 @@ use yii\base\Exception;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class IdValidator extends AbstractValidator
+class IdValidator extends \dicr\validate\AbstractValidator
 {
     /** @var bool */
-    public $skipOnEmpty = true;
+    public $skipOnEmpty = false;
 
     /**
      * Парсит ID.
@@ -23,10 +23,12 @@ class IdValidator extends AbstractValidator
      */
     public static function parse($id)
     {
-        if (is_null($id)) {
+        // если пустое значение
+        if (empty($id)) {
             return null;
         }
 
+        // конверируем в int
         if (is_string($id)) {
             $id = trim($id);
             if ($id === '') {
@@ -38,20 +40,27 @@ class IdValidator extends AbstractValidator
             }
 
             $id = (int)$id;
-        }
-
-        if (!is_int($id)) {
+        } elseif (!is_int($id)) {
             throw new Exception('Неизвестный тип значения' . $id);
         }
 
-        if ($id < 0) {
+        // проверяем значение
+        if (empty($id)) {
+            return null;
+        } elseif ($id < 1) {
             throw new Exception('Значение не может быть отрицательным');
         }
 
-        if (empty($id)) {
-            return null;
-        }
-
         return $id;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \yii\validators\Validator::isEmpty()
+     */
+    public function isEmpty($value)
+    {
+        // пропускаем обработку если только явное null
+        return $value === null;
     }
 }
