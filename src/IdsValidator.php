@@ -1,8 +1,5 @@
 <?php
-namespace dicr\asset;
-
-use dicr\validate\AbstractValidator;
-use dicr\validate\IdValidator;
+namespace dicr\validate;
 
 /**
  * Валидатор массива ID.
