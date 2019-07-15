@@ -13,7 +13,7 @@ use yii\validators\Validator;
 abstract class AbstractValidator extends Validator
 {
     /**
-     * Парсит значение
+     * Парсит значение.
      *
      * @param mixed $value
      * @throws \Exception
@@ -50,9 +50,12 @@ abstract class AbstractValidator extends Validator
 
         try {
             $val = static::parse($value);
+
             if ($val === null && !$this->skipOnEmpty) {
                 throw new \Exception('Требуется значение {attribute}');
             }
+
+            $model->{$attribute} = $val;
         } catch (\Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
