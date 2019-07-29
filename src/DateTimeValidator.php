@@ -12,6 +12,9 @@ use yii\validators\Validator;
  */
 class DateTimeValidator extends Validator
 {
+    /** @var string */
+    public $format = 'Y-m-d H:i:s';
+
     /**
      * Парсит значение даты/времени из строки.
      *
@@ -68,7 +71,7 @@ class DateTimeValidator extends Validator
                 $this->addError($model, $attribute, 'Требуется значение');
             }
 
-            $model->$attribute = $value;
+            $model->$attribute = date($this->format, $value);
         } catch (\Exception $ex) {
             $this->addError($model, $attribute, $ex->getMessage());
         }
