@@ -68,7 +68,7 @@ class DateTimeValidator extends Validator
                 $this->addError($model, $attribute, 'Требуется значение');
             }
 
-            $this->$attribute = $value;
+            $model->$attribute = $value;
         } catch (\Exception $ex) {
             $this->addError($model, $attribute, $ex->getMessage());
         }
