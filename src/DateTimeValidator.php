@@ -1,7 +1,7 @@
 <?php
 namespace dicr\validate;
 
-use yii\validators\DateValidator;
+use yii\validators\Validator;
 
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
@@ -10,20 +10,67 @@ use yii\validators\DateValidator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class DateTimeValidator extends DateValidator
+class DateTimeValidator extends Validator
 {
+    /**
+     * Парсит значение даты/времени из строки.
+     *
+     * @param mixed $value
+     * @throws \InvalidArgumentException
+     * @return int|null
+     */
+    public static function parse($value)
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        $time = strtotime($value);
+        if ($time <= 0) {
+            throw new \InvalidArgumentException('Некорректное значение даты/времени: ' . $value);
+        }
+
+        return $time;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \yii\validators\DateValidator::validateValue()
+     */
+    protected function validateValue($value)
+    {
+        try {
+            $value = static::parse($value);
+        } catch (\Throwable $ex) {
+            return [$ex->getMessage()];
+        }
+
+        if (empty($value) && !$this->skipOnEmpty) {
+            return ['Требуется заполнить значение'];
+        }
+
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      * @see \yii\validators\DateValidator::validateAttribute()
      */
     public function validateAttribute($model, $attribute)
     {
-        // конвертируем значение из "Y-m-d\TH:i:s" в "Y-m-d H:i:s"
-        $matches = null;
-        if (is_string($model->{$attribute}) && preg_match('~^(.+?)T(.+?)$~uism', $model->{$attribute}, $matches)) {
-            $model->{$attribute} = $matches[1] . ' ' . $matches[2];
-        }
+        $value = $model->$attribute;
 
-        return parent::validateAttribute($model, $attribute);
+        try {
+            $value = self::parse($value);
+
+            if (empty($value) && !$this->skipOnEmpty) {
+                $this->addError($model, $attribute, 'Требуется значение');
+            }
+
+            $this->$attribute = $value;
+        } catch (\Exception $ex) {
+            $this->addError($model, $attribute, $ex->getMessage());
+        }
     }
 }
