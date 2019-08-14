@@ -1,10 +1,11 @@
 <?php
 namespace dicr\validate;
 
+use yii\base\Exception;
 use yii\validators\EmailValidator;
 
 /**
- * Валидатор E-Mail адресов через запятую
+ * Валидатор E-Mail адресов в формате сроки через запятую
  *
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
@@ -15,11 +16,48 @@ class EmailsValidator extends AbstractValidator
      * Парсит список Email из сроки
      *
      * @param string|null $value
-     * @return string[] список email
+     * @param array $config
+     * @return string[]|null список email
      */
-    public static function parse($value)
+    public static function parse($value, array $config = [])
     {
-        return preg_split('~[\,\s]+~uism', trim($value), -1, PREG_SPLIT_NO_EMPTY);
+        if (!isset($value)) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
+            if ($value === '') {
+                return null;
+            }
+
+            $value = preg_split('~[\,\s]+~uism', $value, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        if (!is_array($value)) {
+            throw new Exception('Некорректный тип значения');
+        }
+
+        $emailValidator = new EmailValidator([
+            'checkDNS' => true,
+            'enableIDN' => true
+        ]);
+
+        foreach ($value as $i => $email) {
+            $email = trim($email);
+            if ($email === '') {
+                unset($value[$i]);
+            } else {
+                $error = null;
+                if (!$emailValidator->validate($email, $error)) {
+                    throw new Exception($error);
+                }
+
+                $value[$i] = $email;
+            }
+        }
+
+        return $value ?: null;
     }
 
     /**
@@ -28,33 +66,17 @@ class EmailsValidator extends AbstractValidator
      */
     public function validateAttribute($model, $attribute)
     {
-        $emails = $model->{$attribute};
+        $value = $model->{$attribute};
 
-        if (!is_array($emails)) {
-            $emails = self::parse($emails);
-        }
-
-        if (empty($emails)) {
-            $this->addError($model, $attribute, 'Пустой список email-адресов');
-            return false;
-        }
-
-        $emailValidator = new EmailValidator([
-            'checkDNS' => true,
-            'enableIDN' => true
-        ]);
-
-        foreach ($emails as $i => $email) {
-            $email = trim($email);
-
-            if (!$emailValidator->validate($email)) {
-                $this->addError($model, $attribute, 'Некорректный EMail: ' . $email);
-                break;
+        try {
+            $value = self::parse($value);
+            if ($value === null && !$this->skipOnEmpty) {
+                $this->addError('Необходимо заполнить {attribute}');
             }
 
-            $emails[$i] = $email;
+            $model->{$attribute} = implode(', ', $value);
+        } catch (\Throwable $ex) {
+            $this->addError($attribute, $ex->getMessage(), ['value' => $value]);
         }
-
-        $model->{$attribute} = implode(', ', $emails);
     }
 }

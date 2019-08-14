@@ -21,7 +21,7 @@ class GeoValidator extends Validator
      * @param string|null $value
      * @return float[]|null список email
      */
-    public static function parse($value)
+    public static function parse($value, array $config = [])
     {
         $data = preg_split('~[\s\,]+~uism', trim($value), -1, PREG_SPLIT_NO_EMPTY);
         if (empty($data)) {

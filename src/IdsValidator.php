@@ -16,7 +16,7 @@ class IdsValidator extends AbstractValidator
      * @throws \Exception
      * @return int[]
      */
-    public static function parse($ids)
+    public static function parse($ids, array $config = [])
     {
         if (is_null($ids) || $ids === '' || $ids === []) {
             return [];

@@ -1,8 +1,8 @@
 <?php
 namespace dicr\validate;
 
-use yii\validators\Validator;
 use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 
 /**
  * Валидатор данных типа флаг со значениями null/datetime, который конвертирует значения типа true в текущее
@@ -18,13 +18,10 @@ use yii\base\Exception;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 180623
  */
-class TimeFlagValidator extends Validator
+class TimeFlagValidator extends AbstractValidator
 {
 	/** @var string формат даты */
 	public $format = 'Y-m-d H:i:s';
-
-	/** @var bool */
-	public $skipOnEmpty = true;
 
 	/** @var string сообщение об ошибке */
 	public $message = 'Некорретное значение флага/даты';
@@ -38,12 +35,15 @@ class TimeFlagValidator extends Validator
 	 * - int - unix timestamp
 	 * - string - date string
 	 *
-	 * @param string $format формат значения (даты/времени)
+	 * @param array $config
+	 * - format - формат даты и времени (по-умолчанию Y-m-d H:i:s)
 	 * @throws Exception
 	 * @return null|string значение в виде даты
 	 */
-    public static function parse(string $value, string $format = 'Y-m-d H:i:s')
+    public static function parse(string $value, array $config = [])
     {
+        $format = ArrayHelper::getValue($config, 'format', 'Y-m-d H:i:s');
+
         // empty
         if (empty($value)) {
             return null;
@@ -94,32 +94,4 @@ class TimeFlagValidator extends Validator
 
 		return date($format, $value);
     }
-
-    /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateValue()
-     */
-    protected function validateValue($value)
-    {
-        try {
-            self::parse($value);
-        } catch (Exception $ex) {
-            return [$ex->getMessage()];
-        }
-
-        return null;
-    }
-
-	/**
-	 * {@inheritDoc}
-	 * @see \yii\validators\Validator::validateAttribute()
-	 */
-	public function validateAttribute($model, $attribute)
-	{
-	    try {
-	        $model->{$attribute} = self::parse($model->{$attribute});
-	    } catch (Exception $ex) {
-	        $this->addError($model, $attribute, $this->message ?: $ex->getMessage());
-	    }
-	}
 }

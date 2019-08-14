@@ -22,7 +22,7 @@ class PhoneValidator extends Validator
      * @throws Exception
      * @return int|null цифры номера телефона
      */
-    public static function parse(string $phone)
+    public static function parse(string $phone, array $config = [])
     {
         $phone = trim($phone);
         if ($phone === '') {

@@ -16,10 +16,11 @@ abstract class AbstractValidator extends Validator
      * Парсит значение.
      *
      * @param mixed $value
+     * @param array $config
      * @throws \Exception
      * @return mixed|null
      */
-    abstract public static function parse($value);
+    abstract public static function parse($value, array $config = []);
 
     /**
      * {@inheritDoc}
@@ -29,7 +30,7 @@ abstract class AbstractValidator extends Validator
     {
         // парсим значение
         try {
-            $val = static::parse($value);
+            $val = static::parse($value, $this->attributes);
             if ($val === null && !$this->skipOnEmpty) {
                 return ['Требуется значение значение'];
             }
@@ -49,7 +50,7 @@ abstract class AbstractValidator extends Validator
         $value = $model->{$attribute};
 
         try {
-            $val = static::parse($value);
+            $val = static::parse($value, $this->attributes);
 
             if ($val === null && !$this->skipOnEmpty) {
                 throw new \Exception('Требуется значение {attribute}');

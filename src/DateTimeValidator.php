@@ -1,7 +1,6 @@
 <?php
 namespace dicr\validate;
 
-use yii\validators\Validator;
 
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
@@ -10,7 +9,7 @@ use yii\validators\Validator;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class DateTimeValidator extends Validator
+class DateTimeValidator extends AbstractValidator
 {
     /** @var string */
     public $format = 'Y-m-d H:i:s';
@@ -19,10 +18,11 @@ class DateTimeValidator extends Validator
      * Парсит значение даты/времени из строки.
      *
      * @param mixed $value
+     * @param array $config
      * @throws \InvalidArgumentException
      * @return int|null
      */
-    public static function parse($value)
+    public static function parse($value, array $config = [])
     {
         $value = trim($value);
         if ($value === '') {
@@ -39,41 +39,22 @@ class DateTimeValidator extends Validator
 
     /**
      * {@inheritDoc}
-     * @see \yii\validators\DateValidator::validateValue()
-     */
-    protected function validateValue($value)
-    {
-        try {
-            $value = static::parse($value);
-        } catch (\Throwable $ex) {
-            return [$ex->getMessage()];
-        }
-
-        if (empty($value) && !$this->skipOnEmpty) {
-            return ['Требуется заполнить значение'];
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \yii\validators\DateValidator::validateAttribute()
      */
     public function validateAttribute($model, $attribute)
     {
-        $value = $model->$attribute;
+        $value = $model->{$attribute};
 
         try {
             $value = self::parse($value);
 
             if (empty($value) && !$this->skipOnEmpty) {
-                $this->addError($model, $attribute, 'Требуется значение');
+                $this->addError($model, $attribute, 'Требуется значение {attribute}');
             }
 
-            $model->$attribute = date($this->format, $value);
+            $model->{$attribute} = date($this->format, $value);
         } catch (\Exception $ex) {
-            $this->addError($model, $attribute, $ex->getMessage());
+            $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
     }
 }

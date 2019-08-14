@@ -9,11 +9,8 @@ use yii\base\Exception;
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
  */
-class IdValidator extends \dicr\validate\AbstractValidator
+class IdValidator extends AbstractValidator
 {
-    /** @var bool */
-    public $skipOnEmpty = false;
-
     /**
      * Парсит ID.
      *
@@ -21,7 +18,7 @@ class IdValidator extends \dicr\validate\AbstractValidator
      * @throws Exception
      * @return int|null
      */
-    public static function parse($id)
+    public static function parse($id, array $config = [])
     {
         // если пустое значение
         if (empty($id)) {

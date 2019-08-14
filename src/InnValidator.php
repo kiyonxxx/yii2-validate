@@ -23,7 +23,7 @@ class InnValidator extends Validator
      * @throws Exception некорректное значение
      * @return int|null
      */
-    public static function parse($value)
+    public static function parse($value, array $config = [])
     {
         $value = trim($value);
         if ($value === '') {
