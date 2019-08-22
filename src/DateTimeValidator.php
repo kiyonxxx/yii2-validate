@@ -27,7 +27,7 @@ class DateTimeValidator extends AbstractValidator
     {
         $this->format = trim($this->format);
 
-        if (strpos($this->format, 'php:' === 0)) {
+        if (strpos($this->format, 'php:') === 0) {
             $this->format = substr($this->format, 4);
         }
 
