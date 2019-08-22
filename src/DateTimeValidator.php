@@ -2,6 +2,8 @@
 namespace dicr\validate;
 
 
+use yii\base\InvalidConfigException;
+
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
  * datetime-local в формате Y-m-d\TH:i:s
@@ -11,8 +13,28 @@ namespace dicr\validate;
  */
 class DateTimeValidator extends AbstractValidator
 {
+    /** @var string default date time format */
+    const FORMAT_DEFAULT = 'Y-m-d H:i:s';
+
     /** @var string */
-    public $format = 'Y-m-d H:i:s';
+    public $format = self::FORMAT_DEFAULT;
+
+    /**
+     * {@inheritDoc}
+     * @see \yii\validators\Validator::init()
+     */
+    public function init()
+    {
+        $this->format = trim($this->format);
+
+        if (strpos($this->format, 'php:' === 0)) {
+            $this->format = substr($this->format, 4);
+        }
+
+        if ($this->format == '') {
+            throw new InvalidConfigException('format');
+        }
+    }
 
     /**
      * Парсит значение даты/времени из строки.
