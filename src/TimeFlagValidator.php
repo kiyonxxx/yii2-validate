@@ -40,7 +40,7 @@ class TimeFlagValidator extends AbstractValidator
 	 * @throws Exception
 	 * @return null|string значение в виде даты
 	 */
-    public static function parse(string $value, array $config = [])
+    public static function parse($value, array $config = [])
     {
         $format = ArrayHelper::getValue($config, 'format', 'Y-m-d H:i:s');
 
