@@ -5,7 +5,7 @@ use yii\base\Exception;
 use yii\validators\EmailValidator;
 
 /**
- * Валидатор E-Mail адресов в формате сроки через запятую
+ * Валидатор E-Mail адресов в формате сроки через запятую.
  *
  * @author Igor (Dicr) Tarasov <develop@dicr.org>
  * @version 2019
@@ -38,6 +38,10 @@ class EmailsValidator extends AbstractValidator
             throw new Exception('Некорректный тип значения');
         }
 
+        if (empty($value)) {
+            return null;
+        }
+
         $emailValidator = new EmailValidator([
             'checkDNS' => true,
             'enableIDN' => true
@@ -66,17 +70,15 @@ class EmailsValidator extends AbstractValidator
      */
     public function validateAttribute($model, $attribute)
     {
-        $value = $model->{$attribute};
-
         try {
-            $value = self::parse($value);
+            $value = self::parse($model->$attribute);
             if ($value === null && !$this->skipOnEmpty) {
-                $this->addError('Необходимо заполнить {attribute}');
+                throw new \Exception('Необходимо заполнить значение');
             }
 
             $model->{$attribute} = implode(', ', $value);
         } catch (\Throwable $ex) {
-            $this->addError($attribute, $ex->getMessage(), ['value' => $value]);
+            $this->addError($model, $attribute, $ex->getMessage(), ['value' => $model->$attribute]);
         }
     }
 }

@@ -51,12 +51,11 @@ abstract class AbstractValidator extends Validator
 
         try {
             $val = static::parse($value, $this->attributes);
-
             if ($val === null && !$this->skipOnEmpty) {
-                throw new \Exception('Требуется значение {attribute}');
+                return ['Требуется значение значение'];
             }
 
-            $model->{$attribute} = $val;
+            $model->$attribute = $val;
         } catch (\Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
