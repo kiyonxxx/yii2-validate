@@ -1,6 +1,14 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use yii\validators\Validator;
 
 /**
@@ -17,8 +25,8 @@ abstract class AbstractValidator extends Validator
      *
      * @param mixed $value
      * @param array $config
-     * @throws \Exception
      * @return mixed|null
+     * @throws \Exception
      */
     abstract public static function parse($value, array $config = []);
 
@@ -31,11 +39,11 @@ abstract class AbstractValidator extends Validator
         // парсим значение
         try {
             $val = static::parse($value, $this->attributes);
-            if ($val === null && !$this->skipOnEmpty) {
+            if ($val === null && ! $this->skipOnEmpty) {
                 return ['Требуется значение значение'];
             }
-        } catch (\Throwable $ex) {
-            return [ $ex->getMessage(), ['value' => $value] ];
+        } catch (Throwable $ex) {
+            return [$ex->getMessage(), ['value' => $value]];
         }
 
         return null;
@@ -51,12 +59,12 @@ abstract class AbstractValidator extends Validator
 
         try {
             $val = static::parse($value, $this->attributes);
-            if ($val === null && !$this->skipOnEmpty) {
-                return ['Требуется значение значение'];
+            if ($val === null && ! $this->skipOnEmpty) {
+                $this->addError($model, $attribute, 'Требуется указаь значение');
+            } else {
+                $model->{$attribute} = $val;
             }
-
-            $model->$attribute = $val;
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
     }

@@ -1,8 +1,17 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
 use yii\base\Exception;
 use yii\validators\Validator;
+use function count;
+use function is_array;
 
 /**
  * Валидатор гео-координат.
@@ -12,23 +21,21 @@ use yii\validators\Validator;
  */
 class GeoValidator extends Validator
 {
-	/** @var bool */
-    public $skipOnEmpty = true;
-
     /**
      * Парсит координаты
      *
      * @param string|null $value
      * @return float[]|null список email
+     * @throws \yii\base\Exception
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value)
     {
-        $data = preg_split('~[\s\,]+~uism', trim($value), -1, PREG_SPLIT_NO_EMPTY);
+        $data = preg_split('~[\s,]+~um', trim($value), - 1, PREG_SPLIT_NO_EMPTY);
         if (empty($data)) {
             return null;
         }
 
-        if (count($data) != 2 || !is_numeric($data[0]) || !is_numeric($data[1])) {
+        if (count($data) !== 2 || ! is_numeric($data[0]) || ! is_numeric($data[1])) {
             throw new Exception('некорректный формат гео-позиции');
         }
 
@@ -56,9 +63,10 @@ class GeoValidator extends Validator
      */
     public function validateAttribute($model, $attribute)
     {
+        $coords = $model->{$attribute};
+
         try {
-            $coords = $model->{$attribute};
-            if (!is_array($coords)) {
+            if (! is_array($coords)) {
                 $coords = static::parse($coords);
             }
 

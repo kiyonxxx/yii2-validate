@@ -1,8 +1,16 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
 use yii\base\Exception;
 use yii\validators\Validator;
+use function strlen;
 
 /**
  * Валидатор телефона
@@ -12,17 +20,14 @@ use yii\validators\Validator;
  */
 class PhoneValidator extends Validator
 {
-	/** @var bool */
-    public $skipOnEmpty = true;
-
-	/**
+    /**
      * Парсит номер телефона
      *
      * @param string $phone номер телефона в свободном формате
-     * @throws Exception
      * @return int|null цифры номера телефона
+     * @throws \yii\base\Exception
      */
-    public static function parse(string $phone, array $config = [])
+    public static function parse(string $phone)
     {
         $phone = trim($phone);
         if ($phone === '') {
@@ -31,18 +36,20 @@ class PhoneValidator extends Validator
 
         // ищем недопустимый символ
         $matches = null;
-        if (preg_match('~([^\d\s\+\-\(\)])~uism', $phone, $matches)) {
+        if (preg_match('~([^\d\s+\-()])~um', $phone, $matches)) {
             throw new Exception(sprintf('Недопусимый символ "%s" в номере телефона', $matches[1]));
         }
 
         // очищаем линие символы (нельзя в int, чтобы не потерять начальные нули)
-        $phone = preg_replace('~[^\d]+~uism', '', $phone);
+        $phone = preg_replace('~[\D]+~um', '', $phone);
 
         // проверяем длину
         $length = strlen($phone);
         if ($length < 7) {
             throw new Exception('Недостаточно цифр в номере телефона');
-        } elseif ($length > 12) {
+        }
+
+        if ($length > 12) {
             throw new Exception('Слишком много цифр в номере телефона');
         }
 

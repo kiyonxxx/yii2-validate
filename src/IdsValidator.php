@@ -1,5 +1,14 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
+
+use function is_array;
 
 /**
  * Валидатор массива ID.
@@ -13,25 +22,24 @@ class IdsValidator extends AbstractValidator
      * Парсит массив id
      *
      * @param null|int[]|string[] $ids
-     * @throws \Exception
+     * @param array $config
      * @return int[]
+     * @throws \yii\base\Exception
      */
     public static function parse($ids, array $config = [])
     {
-        if (is_null($ids) || $ids === '' || $ids === []) {
+        if ($ids === null || $ids === '' || $ids === []) {
             return [];
         }
 
-        if (!is_array($ids)) {
+        if (! is_array($ids)) {
             $ids = [$ids];
         }
 
-        foreach ($ids as $i => $id) {
+        foreach ($ids as $i => &$id) {
             $id = IdValidator::parse($id);
             if (empty($id)) {
                 unset($ids[$i]);
-            } else {
-                $ids[$i] = $id;
             }
         }
 

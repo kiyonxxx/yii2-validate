@@ -1,7 +1,16 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
 use yii\base\Exception;
+use function is_int;
+use function is_string;
 
 /**
  * Валидация ID
@@ -15,8 +24,9 @@ class IdValidator extends AbstractValidator
      * Парсит ID.
      *
      * @param int|string|null $id
-     * @throws Exception
+     * @param array $config
      * @return int|null
+     * @throws \yii\base\Exception
      */
     public static function parse($id, array $config = [])
     {
@@ -32,24 +42,28 @@ class IdValidator extends AbstractValidator
                 return null;
             }
 
-            if (!ctype_digit($id)) {
+            if (! ctype_digit($id)) {
                 throw new Exception('Недопустимые символы');
             }
 
             $id = (int)$id;
-        } elseif (!is_int($id)) {
+        } elseif (! is_int($id)) {
             throw new Exception('Неизвестный тип значения' . $id);
         }
 
         // проверяем значение
         if (empty($id)) {
             return null;
-        } elseif ($id < 1) {
+        }
+
+        if ($id < 1) {
             throw new Exception('Значение не может быть отрицательным');
         }
 
         return $id;
     }
+
+    /** @noinspection ClassMethodNameMatchesFieldNameInspection */
 
     /**
      * {@inheritDoc}

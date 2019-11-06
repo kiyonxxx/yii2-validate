@@ -1,8 +1,18 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use yii\base\Exception;
 use yii\validators\EmailValidator;
+use function is_array;
+use function is_string;
 
 /**
  * Валидатор E-Mail адресов в формате сроки через запятую.
@@ -15,13 +25,16 @@ class EmailsValidator extends AbstractValidator
     /**
      * Парсит список Email из сроки
      *
-     * @param string|null $value
+     * @param mixed $value
      * @param array $config
      * @return string[]|null список email
+     * @throws \yii\base\Exception
+     * @throws \yii\base\Exception
+     * @throws \yii\base\Exception
      */
     public static function parse($value, array $config = [])
     {
-        if (!isset($value)) {
+        if (! isset($value)) {
             return null;
         }
 
@@ -31,10 +44,10 @@ class EmailsValidator extends AbstractValidator
                 return null;
             }
 
-            $value = preg_split('~[\,\s]+~uism', $value, -1, PREG_SPLIT_NO_EMPTY);
+            $value = preg_split('~[,\s]+~um', $value, - 1, PREG_SPLIT_NO_EMPTY);
         }
 
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             throw new Exception('Некорректный тип значения');
         }
 
@@ -47,17 +60,15 @@ class EmailsValidator extends AbstractValidator
             'enableIDN' => true
         ]);
 
-        foreach ($value as $i => $email) {
+        foreach ($value as $i => &$email) {
             $email = trim($email);
             if ($email === '') {
                 unset($value[$i]);
             } else {
                 $error = null;
-                if (!$emailValidator->validate($email, $error)) {
+                if (! $emailValidator->validate($email, $error)) {
                     throw new Exception($error);
                 }
-
-                $value[$i] = $email;
             }
         }
 
@@ -71,14 +82,14 @@ class EmailsValidator extends AbstractValidator
     public function validateAttribute($model, $attribute)
     {
         try {
-            $value = self::parse($model->$attribute);
-            if ($value === null && !$this->skipOnEmpty) {
-                throw new \Exception('Необходимо заполнить значение');
+            $value = self::parse($model->{$attribute});
+            if ($value === null && ! $this->skipOnEmpty) {
+                throw new Exception('Необходимо заполнить значение');
             }
 
             $model->{$attribute} = implode(', ', $value);
-        } catch (\Throwable $ex) {
-            $this->addError($model, $attribute, $ex->getMessage(), ['value' => $model->$attribute]);
+        } catch (Throwable $ex) {
+            $this->addError($model, $attribute, $ex->getMessage(), ['value' => $model->{$attribute}]);
         }
     }
 }

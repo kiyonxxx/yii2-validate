@@ -1,7 +1,15 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
-
+use Exception;
+use InvalidArgumentException;
 use yii\base\InvalidConfigException;
 
 /**
@@ -21,17 +29,18 @@ class DateTimeValidator extends AbstractValidator
 
     /**
      * {@inheritDoc}
+     * @throws \yii\base\InvalidConfigException
      * @see \yii\validators\Validator::init()
      */
     public function init()
     {
         $this->format = trim($this->format);
 
-        if (strpos($this->format, 'php:') === 0) {
+        if (strncmp($this->format, 'php:', 4) === 0) {
             $this->format = substr($this->format, 4);
         }
 
-        if ($this->format == '') {
+        if ($this->format === '') {
             throw new InvalidConfigException('format');
         }
     }
@@ -41,8 +50,8 @@ class DateTimeValidator extends AbstractValidator
      *
      * @param mixed $value
      * @param array $config
-     * @throws \InvalidArgumentException
      * @return int|null
+     * @throws \InvalidArgumentException
      */
     public static function parse($value, array $config = [])
     {
@@ -53,7 +62,7 @@ class DateTimeValidator extends AbstractValidator
 
         $time = strtotime($value);
         if ($time <= 0) {
-            throw new \InvalidArgumentException('Некорректное значение даты/времени: ' . $value);
+            throw new InvalidArgumentException('Некорректное значение даты/времени: ' . $value);
         }
 
         return $time;
@@ -70,12 +79,12 @@ class DateTimeValidator extends AbstractValidator
         try {
             $value = self::parse($value);
 
-            if (empty($value) && !$this->skipOnEmpty) {
+            if (empty($value) && ! $this->skipOnEmpty) {
                 $this->addError($model, $attribute, 'Требуется значение {attribute}');
             }
 
             $model->{$attribute} = date($this->format, $value);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
     }

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
 use yii\base\ErrorException;
@@ -26,13 +33,15 @@ trait PhoneFormatterTrait
      * @param string|null $value
      * @param string $format
      * @return string форматиррованный телефон
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\ErrorException
      */
     public function asPhone(string $value = null, string $format = '')
     {
         // удаляем из значения все кроме цифр
-        $value = preg_replace('~[^\d]~uism', '', trim($value));
+        $value = preg_replace('~[\D]~um', '', trim($value));
         if ($value === '') {
-            return $this->nullDisplay;
+            return '';
         }
 
         // дополняем строку до полного размера
@@ -40,7 +49,7 @@ trait PhoneFormatterTrait
 
         // разбираем сроку на компоненты
         $matches = null;
-        if (!preg_match('~^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$~uism', $value, $matches)) {
+        if (! preg_match('~^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$~um', $value, $matches)) {
             throw new ErrorException('внутренняя ошибка: ' . $value);
         }
 
@@ -61,10 +70,6 @@ trait PhoneFormatterTrait
         }
 
         // формаируем
-        return str_replace(
-            array_keys($components),
-            array_values($components),
-            $format ?: $this->phoneFormat
-        );
+        return str_replace(array_keys($components), array_values($components), $format ?: $this->phoneFormat);
     }
 }

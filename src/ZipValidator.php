@@ -1,4 +1,11 @@
 <?php
+/**
+ * Copyright (c) 2019.
+ *
+ * @author Igor (Dicr) Tarasov, develop@dicr.org
+ */
+
+declare(strict_types = 1);
 namespace dicr\validate;
 
 use yii\base\Exception;
@@ -22,8 +29,8 @@ class ZipValidator extends AbstractValidator
      * @param mixed $value
      * @param array $config
      * - digits - кол-во цифр
-     * @throws Exception
      * @return int|null
+     * @throws Exception
      */
     public static function parse($value, array $config = [])
     {
@@ -34,7 +41,7 @@ class ZipValidator extends AbstractValidator
             return null;
         }
 
-        if (!preg_match('~^\d{1,' . $digits . '}$~', $value)) {
+        if (! preg_match('~^\d{1,' . $digits . '}$~', $value)) {
             throw new Exception('Некорректное значение индекса');
         }
 
