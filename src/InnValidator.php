@@ -14,8 +14,6 @@ use yii\validators\Validator;
 /**
  * Валидатор ИНН
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
  * @link https://ru.wikipedia.org/wiki/%D0%9A%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5_%D1%87%D0%B8%D1%81%D0%BB%D0%BE#%D0%9D%D0%BE%D0%BC%D0%B5%D1%80%D0%B0_%D0%98%D0%9D%D0%9D
  */
 class InnValidator extends Validator
@@ -41,7 +39,7 @@ class InnValidator extends Validator
             $n9 = ((2 * $n[0] + 4 * $n[1] + 10 * $n[2] + 3 * $n[3] + 5 * $n[4] + 9 * $n[5] + 4 * $n[6] + 6 * $n[7] +
                     8 * $n[8]) % 11) % 10;
 
-            if ($n[9] !== $n9) {
+            if ((int)$n[9] !== $n9) {
                 throw new Exception(sprintf('Некорректное значение ИНН [%d]', $n9));
             }
         } elseif (preg_match('~^\d{12}$~um', $n)) {
@@ -51,7 +49,7 @@ class InnValidator extends Validator
             $n11 = ((3 * $n[0] + 7 * $n[1] + 2 * $n[2] + 4 * $n[3] + 10 * $n[4] + 3 * $n[5] + 5 * $n[6] + 9 * $n[7] +
                      4 * $n[8] + 6 * $n[9] + 8 * $n[10]) % 11) % 10;
 
-            if ($n[10] !== $n10 || $n[11] !== $n11) {
+            if ((int)$n[10] !== $n10 || (int)$n[11] !== $n11) {
                 throw new Exception(sprintf('Некорректное значение ИНН [%d.%d]', $n10, $n11));
             }
         } else {
