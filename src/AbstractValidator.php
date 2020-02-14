@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 14.02.20 08:18:23
  */
 
 declare(strict_types = 1);
@@ -13,22 +14,38 @@ use yii\validators\Validator;
 
 /**
  * Абстрактный валидатор.
- *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
- *
  */
 abstract class AbstractValidator extends Validator
 {
+    /** @var bool допускать пустые значения */
+    public $skipOnEmpty = false;
+
     /**
-     * Парсит значение.
+     * Парсит значение, приводя к типу
+     *
+     * @param mixed $value значение
+     * @param array $config
+     * @return mixed|null приведенное к типу значение или null если пустое
+     * @throws \dicr\validate\ValidateException значение некорректное
+     */
+    abstract public static function parse($value, array $config = null);
+
+    /**
+     * Фильтрует значение, приводя к типу.
      *
      * @param mixed $value
      * @param array $config
-     * @return mixed|null
-     * @throws \Exception
+     * @return mixed|null приведенное к типу значение или null, если не корректное
      */
-    abstract public static function parse($value, array $config = []);
+    public static function filter($value, array $config = null)
+    {
+        try {
+            return static::parse($value, $config);
+        } /** @noinspection BadExceptionsProcessingInspection */
+        catch (Throwable $ex) {
+            return null;
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -43,7 +60,7 @@ abstract class AbstractValidator extends Validator
                 return ['Требуется значение значение'];
             }
         } catch (Throwable $ex) {
-            return [$ex->getMessage(), ['value' => $value]];
+            return [$ex->getMessage()];
         }
 
         return null;
@@ -60,10 +77,10 @@ abstract class AbstractValidator extends Validator
         try {
             $val = static::parse($value, $this->attributes);
             if ($val === null && ! $this->skipOnEmpty) {
-                $this->addError($model, $attribute, 'Требуется указаь значение');
-            } else {
-                $model->{$attribute} = $val;
+                throw new ValidateException('Требуется указать значение');
             }
+
+            $model->{$attribute} = $val;
         } catch (Throwable $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }

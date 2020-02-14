@@ -1,23 +1,23 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 14.02.20 07:56:38
  */
 
 declare(strict_types = 1);
+
 namespace dicr\validate;
 
-use InvalidArgumentException;
 use yii\base\Exception;
+use yii\base\InvalidArgumentException;
 use yii\base\Model;
-use function get_class;
 
 /**
  * Ошибка валидации модели.
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 180504
+ * @noinspection PhpUnused
  */
 class ValidateException extends Exception
 {
@@ -27,17 +27,18 @@ class ValidateException extends Exception
     /**
      * Конструктор.
      *
-     * @param Model $model
-     * @param string|null $message
+     * @param Model|string $value
      */
-    public function __construct(Model $model, string $message = null)
+    public function __construct($value)
     {
-        if (empty($model)) {
-            throw new InvalidArgumentException('empty model');
+        if ($value instanceof Model) {
+            $this->model = $value;
+            $msg = implode('; ', $value->getErrorSummary(false));
+        } elseif (is_scalar($value)) {
+            $msg = (string)$value;
+        } else {
+            throw new InvalidArgumentException('value');
         }
-        $this->model = $model;
-
-        $msg = ($message ?: get_class($model)) . ': ' . implode('; ', $model->getErrorSummary(false));
 
         parent::__construct($msg);
     }

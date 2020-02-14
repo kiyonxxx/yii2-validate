@@ -15,9 +15,7 @@
     "support": {
         "source": "https://gitlab.com/dicr/yii2-validate.git"
     },
-    "keywords": [
-        "php yii2 validate"
-    ],
+    "keywords": ["php", "yii2", "validate"],
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0",
@@ -35,7 +33,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "dicr\\validate\\": "src"
+            "dicr\\validate\\": "src/"
         }
     }
 }

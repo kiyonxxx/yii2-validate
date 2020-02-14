@@ -1,77 +1,41 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 14.02.20 08:17:39
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use yii\base\Exception;
-use function is_int;
-use function is_string;
-
 /**
  * Валидация ID
- *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
+ * Значение - целое число > 0
  */
 class IdValidator extends AbstractValidator
 {
     /**
-     * Парсит ID.
+     * Фильтрует ID
      *
-     * @param int|string|null $id
+     * @param mixed $value
      * @param array $config
      * @return int|null
-     * @throws \yii\base\Exception
+     * @throws \dicr\validate\ValidateException
      */
-    public static function parse($id, array $config = [])
+    public static function parse($value, array $config = null)
     {
-        // если пустое значение
-        if (empty($id)) {
+        if ($value === null || $value === '') {
             return null;
         }
 
-        // конверируем в int
-        if (is_string($id)) {
-            $id = trim($id);
-            if ($id === '') {
-                return null;
+        if (is_scalar($value) && preg_match('~^\d+$~', (string)$value)) {
+            $id = (int)$value;
+            if ($id > 0) {
+                return $id;
             }
-
-            if (! ctype_digit($id)) {
-                throw new Exception('Недопустимые символы');
-            }
-
-            $id = (int)$id;
-        } elseif (! is_int($id)) {
-            throw new Exception('Неизвестный тип значения' . $id);
         }
 
-        // проверяем значение
-        if (empty($id)) {
-            return null;
-        }
-
-        if ($id < 1) {
-            throw new Exception('Значение не может быть отрицательным');
-        }
-
-        return $id;
-    }
-
-    /** @noinspection ClassMethodNameMatchesFieldNameInspection */
-
-    /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::isEmpty()
-     */
-    public function isEmpty($value)
-    {
-        // пропускаем обработку если только явное null
-        return $value === null;
+        throw new ValidateException('Некорректный id: ' . $value);
     }
 }
