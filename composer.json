@@ -16,7 +16,18 @@
         "source": "https://gitlab.com/dicr/yii2-validate.git"
     },
     "keywords": ["php", "yii2", "validate"],
+    "autoload": {
+        "psr-4": {
+            "dicr\\validate\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "dicr\\tests\\": "tests/"
+        }
+    },
     "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
         "php": ">=7.0",
         "yiisoft/yii2": "~2.0"
@@ -30,10 +41,5 @@
             "type": "composer",
             "url": "https://asset-packagist.org"
         }
-    ],
-    "autoload": {
-        "psr-4": {
-            "dicr\\validate\\": "src/"
-        }
-    }
+    ]
 }

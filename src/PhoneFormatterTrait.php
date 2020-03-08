@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 25.02.20 06:29:14
  */
 
 declare(strict_types = 1);
@@ -36,10 +37,10 @@ trait PhoneFormatterTrait
      * @throws \yii\base\ErrorException
      * @throws \yii\base\ErrorException
      */
-    public function asPhone(string $value = null, string $format = '')
+    public function asPhone($value, string $format = '')
     {
         // удаляем из значения все кроме цифр
-        $value = preg_replace('~[\D]~um', '', trim($value));
+        $value = preg_replace('~[\D]~um', '', trim((string)$value));
         if ($value === '') {
             return '';
         }

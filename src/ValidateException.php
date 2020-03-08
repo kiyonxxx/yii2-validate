@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 14.02.20 07:56:38
+ * @version 08.03.20 05:48:20
  */
 
 declare(strict_types = 1);
@@ -13,6 +13,11 @@ namespace dicr\validate;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
+use function get_class;
+use function implode;
+use function is_array;
+use function is_string;
+use function reset;
 
 /**
  * Ошибка валидации модели.
@@ -27,20 +32,75 @@ class ValidateException extends Exception
     /**
      * Конструктор.
      *
-     * @param Model|string $value
+     * @param Model|array|string $value модель с ошибками, список ошибок или строка ошибки
      */
     public function __construct($value)
     {
-        if ($value instanceof Model) {
+        if (empty($value)) {
+            throw new InvalidArgumentException('value');
+        }
+
+        if (is_string($value)) {
+            $message = $value;
+        } elseif (is_array($value)) {
+            $message = self::messageFromArray($value);
+        } elseif ($value instanceof Model) {
+            /** @var Model $value */
             $this->model = $value;
-            $msg = implode('; ', $value->getErrorSummary(false));
-        } elseif (is_scalar($value)) {
-            $msg = (string)$value;
+            $message = self::messageFromModel($value);
         } else {
             throw new InvalidArgumentException('value');
         }
 
-        parent::__construct($msg);
+        parent::__construct($message);
+    }
+
+    /**
+     * Формирует сообщение об ошибке из ошибок модели.
+     *
+     * @param \yii\base\Model $model
+     * @return string
+     */
+    public static function messageFromModel(Model $model)
+    {
+        $message = get_class($model);
+
+        if ($model->hasErrors()) {
+            $errors = [];
+            foreach ($model->firstErrors as $attribute => $error) {
+                $errors[] = $attribute . ': ' . $error;
+            }
+
+            $message .= ': ' . implode('; ', $errors);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Формирует сообщение об ошибке из списка ошибок.
+     *
+     * @param array $errors массив ошибок string[], либо attribute => string|string[]
+     * @return string
+     */
+    public static function messageFromArray(array $errors)
+    {
+        $parts = [];
+
+        if (isset($errors[0])) {
+            // список ошибок без аттрибутов
+            $parts = $errors;
+        } else {
+            // список ошибок в виде attribute => string|string[]
+            foreach ($errors as $attribute => $error) {
+                if (! empty($error)) {
+                    $error = (array)$error;
+                    $parts[] = $attribute . ': ' . reset($error);
+                }
+            }
+        }
+
+        return implode('; ', $parts);
     }
 
     /**
