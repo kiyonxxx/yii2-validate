@@ -1,43 +1,44 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 07:29:37
  */
 
+/** @noinspection PhpMethodMayBeStaticInspection */
 declare(strict_types = 1);
 namespace dicr\tests;
 
-use PHPUnit\Framework\TestCase;
 use dicr\validate\IdValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * IdValidator Test.
- *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
  */
 class IdValidatorTest extends TestCase
 {
     /**
-     * Тесты.
+     * @throws \dicr\validate\ValidateException
      */
-    public function test()
+    public function testEmpty()
     {
-        $model = new TestModel();
-        $validator = new IdValidator(['skipOnEmpty' => true]);
+        self::assertNull(IdValidator::parse(null));
+        self::assertSame('', IdValidator::format(null));
 
-        $model->id = null;
-        $validator->validateAttribute($model, 'id');
-        self::assertNull($model->id);
+        self::assertNull(IdValidator::parse(''));
+        self::assertSame('', IdValidator::format(''));
 
-        $model->id = 0;
-        $validator->validateAttribute($model, 'id');
-        self::assertNull($model->id);
-
-        $model->id = false;
-        $validator->validateAttribute($model, 'id');
-        self::assertNull($model->id);
+        self::assertNull(IdValidator::parse(0));
+        self::assertSame('', IdValidator::format(0));
     }
 
+    public function testId()
+    {
+        self::assertSame(1234, IdValidator::parse(1234));
+        self::assertSame('1234', IdValidator::format(1234));
+
+        self::assertSame(1234, IdValidator::parse('1234'));
+        self::assertSame('1234', IdValidator::format('1234'));
+    }
 }

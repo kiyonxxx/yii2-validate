@@ -3,13 +3,11 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:05:07
+ * @version 08.03.20 07:29:37
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
-
-use function number_format;
 
 /**
  * Валидация ID
@@ -55,6 +53,6 @@ class IdValidator extends AbstractValidator
      */
     public static function format($value, array $config = null)
     {
-        return number_format($value);
+        return empty($value) ? '' : (string)(int)$value;
     }
 }
