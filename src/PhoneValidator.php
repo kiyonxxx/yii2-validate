@@ -1,47 +1,58 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 07:01:59
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use yii\base\ErrorException;
 use yii\base\Exception;
-use yii\validators\Validator;
+use yii\helpers\ArrayHelper;
+use function preg_match;
+use function sprintf;
+use function str_pad;
 use function strlen;
+use const STR_PAD_LEFT;
 
 /**
- * Валидатор телефона
+ * Валидатор телефона.
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
+ * @noinspection PhpUnused
  */
-class PhoneValidator extends Validator
+class PhoneValidator extends AbstractValidator
 {
+    /** @var int код страны для добавления при форматировании */
+    public $country;
+
+    /** @var int код региона для добавления при форматировании */
+    public $region;
+
     /**
      * Парсит номер телефона
      *
-     * @param string $phone номер телефона в свободном формате
+     * @param $value
+     * @param array|null $config
      * @return int|null цифры номера телефона
      * @throws \yii\base\Exception
      */
-    public static function parse(string $phone)
+    public static function parse($value, array $config = null)
     {
-        $phone = trim($phone);
-        if ($phone === '') {
+        if ($value === null || $value === '') {
             return null;
         }
 
         // ищем недопустимый символ
         $matches = null;
-        if (preg_match('~([^\d\s+\-()])~um', $phone, $matches)) {
+        if (preg_match('~([^+\d\s+\-()])~um', $value, $matches)) {
             throw new Exception(sprintf('Недопусимый символ "%s" в номере телефона', $matches[1]));
         }
 
         // очищаем линие символы (нельзя в int, чтобы не потерять начальные нули)
-        $phone = preg_replace('~[\D]+~um', '', $phone);
+        $phone = preg_replace('~[\D]+~um', '', $value);
 
         // проверяем длину
         $length = strlen($phone);
@@ -57,38 +68,58 @@ class PhoneValidator extends Validator
     }
 
     /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateValue()
+     * Форматирование телефона в строку.
+     *
+     * @param mixed $value
+     * @param array|null $config
+     * - int $country код страны
+     * - int $region код региона по-умолчанию
+     * @return string|void
+     * @throws \yii\base\ErrorException
      */
-    protected function validateValue($value)
+    public static function format($value, array $config = null)
     {
-        try {
-            $value = self::parse((string)$value);
-            if (empty($value)) {
-                throw new Exception('Пустой номер телефона');
-            }
-        } catch (Exception $ex) {
-            return [$ex->getMessage()];
+        $country = (int)ArrayHelper::getValue($config ?: [], 'country');
+        $region = (int)ArrayHelper::getValue($config ?: [], 'region');
+
+        // дополняем строку до полного размера
+        $value = str_pad((string)$value, 12, '0', STR_PAD_LEFT);
+
+        // разбираем сроку на компоненты
+        $matches = null;
+        if (! preg_match('~^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$~um', $value, $matches)) {
+            throw new ErrorException('внутренняя ошибка: ' . $value);
         }
 
-        return null;
-    }
+        $components = [
+            'c' => (int)$matches[1], // код страны
+            'r' => (int)$matches[2], // код региона
+            'p' => sprintf('%s-%s-%s', $matches[3], $matches[4], $matches[5])
+        ];
 
-    /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateAttribute()
-     */
-    public function validateAttribute($model, $attribute)
-    {
-        try {
-            $value = self::parse((string)$model->{$attribute});
-            if (empty($value)) {
-                throw new Exception('Пустой номер телефона');
-            }
-
-            $model->{$attribute} = $value;
-        } catch (Exception $ex) {
-            $this->addError($model, $attribute, $ex->getMessage());
+        // добавляем регион по-умолчанию
+        if (empty($components['c'])) {
+            $components['c'] = $country;
         }
+
+        // добавляем страну по-умолчанию
+        if (empty($components['r'])) {
+            $components['r'] = $region;
+        }
+
+        // строим строку
+        $s = $components['p'];
+
+        // добавляем регион
+        if (! empty($components['r'])) {
+            $s = '(' . sprintf('%03d', $components['r']) . ') ' . $s;
+
+            // добавляем страну
+            if (! empty($components['c'])) {
+                $s = '+' . $components['c'] . ' ' . $s;
+            }
+        }
+
+        return $s;
     }
 }

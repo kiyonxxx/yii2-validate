@@ -3,11 +3,13 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 14.02.20 08:17:39
+ * @version 08.03.20 06:05:07
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
+
+use function number_format;
 
 /**
  * Валидация ID
@@ -31,11 +33,28 @@ class IdValidator extends AbstractValidator
 
         if (is_scalar($value) && preg_match('~^\d+$~', (string)$value)) {
             $id = (int)$value;
+
+            if ($id === 0) {
+                return null;
+            }
+
             if ($id > 0) {
                 return $id;
             }
         }
 
         throw new ValidateException('Некорректный id: ' . $value);
+    }
+
+    /**
+     * Конвертирует в строку.
+     *
+     * @param int $value
+     * @param array|null $config
+     * @return string
+     */
+    public static function format($value, array $config = null)
+    {
+        return number_format($value);
     }
 }

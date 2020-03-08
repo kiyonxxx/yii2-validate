@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 14.02.20 08:18:23
+ * @version 08.03.20 06:12:21
  */
 
 declare(strict_types = 1);
@@ -17,11 +17,15 @@ use yii\validators\Validator;
  */
 abstract class AbstractValidator extends Validator
 {
-    /** @var bool допускать пустые значения */
+    /**
+     * @var bool допускать пустые значения
+     * Так как некоторые валидаторы, например ids[] могут возвращать пустые значения после проверки пустого массива,
+     * то по0умолчанию skipOnEmpty = false
+     */
     public $skipOnEmpty = false;
 
     /**
-     * Парсит значение, приводя к типу
+     * Парсит значение, приводя к типу.
      *
      * @param mixed $value значение
      * @param array $config
@@ -31,7 +35,7 @@ abstract class AbstractValidator extends Validator
     abstract public static function parse($value, array $config = null);
 
     /**
-     * Фильтрует значение, приводя к типу.
+     * Фильтрует значение, приводя к типу (отбразывая некорректные)
      *
      * @param mixed $value
      * @param array $config
@@ -48,6 +52,15 @@ abstract class AbstractValidator extends Validator
     }
 
     /**
+     * Форматирует значение.
+     *
+     * @param mixed $value тип значения зависит от валидатора и должнен быть указан в реализуемом классе
+     * @param array|null $config параметры форматирования
+     * @return string
+     */
+    abstract public static function format($value, array $config = null);
+
+    /**
      * {@inheritDoc}
      * @see \yii\validators\Validator::validateValue()
      */
@@ -57,7 +70,7 @@ abstract class AbstractValidator extends Validator
         try {
             $val = static::parse($value, $this->attributes);
             if ($val === null && ! $this->skipOnEmpty) {
-                return ['Требуется значение значение'];
+                return ['Требуется значение'];
             }
         } catch (Throwable $ex) {
             return [$ex->getMessage()];
@@ -77,7 +90,7 @@ abstract class AbstractValidator extends Validator
         try {
             $val = static::parse($value, $this->attributes);
             if ($val === null && ! $this->skipOnEmpty) {
-                throw new ValidateException('Требуется указать значение');
+                throw new ValidateException('Требуется значение');
             }
 
             $model->{$attribute} = $val;

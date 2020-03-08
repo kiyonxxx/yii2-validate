@@ -1,82 +1,74 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 06:33:27
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use InvalidArgumentException;
 use yii\base\Exception;
-use yii\validators\Validator;
+use function array_values;
 use function count;
 use function is_array;
 
 /**
  * Валидатор гео-координат.
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
+ * @noinspection PhpUnused
  */
-class GeoValidator extends Validator
+class GeoValidator extends AbstractValidator
 {
     /**
-     * Парсит координаты
+     * Парсит координаты в формате через запятую
      *
-     * @param string|null $value
+     * @param string|float[] $value
+     * @param array|null $config
      * @return float[]|null список email
      * @throws \yii\base\Exception
      */
-    public static function parse($value)
+    public static function parse($value, array $config = null)
     {
-        $data = preg_split('~[\s,]+~um', trim($value), - 1, PREG_SPLIT_NO_EMPTY);
-        if (empty($data)) {
+        if ($value === null || $value === '' || $value === []) {
             return null;
         }
 
-        if (count($data) !== 2 || ! is_numeric($data[0]) || ! is_numeric($data[1])) {
-            throw new Exception('некорректный формат гео-позиции');
+        if (! is_array($value)) {
+            $matches = null;
+            if (! preg_match('~^(\d+\.\d+)[\,\s]+(\d+\.\d+)$~', (string)$value, $matches)) {
+                throw new Exception('Некорректноый формат гео-координат: ' . $value);
+            }
+
+            $value = [(float)$matches[1], (float)$matches[2]];
         }
 
-        return [(float)$data[0], (float)$data[1]];
+        if (count($value) !== 2) {
+            throw new Exception('Некорректное значение гео-координат');
+        }
+
+        $value = array_values($value);
+        return [
+            (float)$value[0],
+            (float)$value[1]
+        ];
     }
 
     /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateValue()
+     * Форматирует значение гео-координа в строку через запятую.
+     *
+     * @param string|float[2] $value
+     * @param array|null $config
+     * @return string
      */
-    protected function validateValue($value)
+    public static function format($value, array $config = null)
     {
-        try {
-            static::parse(trim($value));
-        } catch (Exception $ex) {
-            return [$ex->getMessage()];
+        if (! is_array($value) || count($value) !== 2) {
+            throw new InvalidArgumentException('value');
         }
 
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateAttribute()
-     */
-    public function validateAttribute($model, $attribute)
-    {
-        $coords = $model->{$attribute};
-
-        try {
-            if (! is_array($coords)) {
-                $coords = static::parse($coords);
-            }
-
-            if (empty($coords)) {
-                throw new Exception('пустое значение координат');
-            }
-
-            $model->{$attribute} = implode(',', $coords);
-        } catch (Exception $ex) {
-            $this->addError($model, $attribute, $ex->getMessage());
-        }
+        return implode(', ', $value);
     }
 }

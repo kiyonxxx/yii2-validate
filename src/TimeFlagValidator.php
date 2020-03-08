@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 07:06:25
  */
 
 declare(strict_types = 1);
@@ -12,6 +13,7 @@ use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use function in_array;
 use function is_bool;
+use function is_string;
 
 /**
  * Валидатор данных типа флаг со значениями null/datetime, который конвертирует значения типа true в текущее
@@ -24,16 +26,12 @@ use function is_bool;
  *
  * Используется с полями типа DATETIME/null, например в поле типа disabled, published, ....
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 180623
+ * @noinspection PhpUnused
  */
 class TimeFlagValidator extends AbstractValidator
 {
     /** @var string формат даты */
     public $format = 'Y-m-d H:i:s';
-
-    /** @var string сообщение об ошибке */
-    public $message = 'Некорретное значение флага/даты';
 
     /**
      * Парсит значение флага даты
@@ -49,7 +47,7 @@ class TimeFlagValidator extends AbstractValidator
      * @return null|string значение в виде даты
      * @throws Exception
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = null)
     {
         $format = ArrayHelper::getValue($config, 'format', 'Y-m-d H:i:s');
 
@@ -104,5 +102,25 @@ class TimeFlagValidator extends AbstractValidator
         }
 
         return date($format, $value);
+    }
+
+    /**
+     * Форматирует в строку.
+     *
+     * @param int|string|null $value
+     * @param array|null $config
+     * @return string|void
+     */
+    public static function format($value, array $config = null)
+    {
+        if (empty($value)) {
+            return '';
+        }
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        return date('Y-m-d H:i:s', (int)$value);
     }
 }

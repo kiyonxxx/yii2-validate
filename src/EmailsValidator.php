@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 06:23:17
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use yii\base\Exception;
 use yii\validators\EmailValidator;
 use function is_array;
@@ -16,25 +16,22 @@ use function is_string;
 
 /**
  * Валидатор E-Mail адресов в формате сроки через запятую.
- *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
  */
 class EmailsValidator extends AbstractValidator
 {
     /**
      * Парсит список Email из сроки
      *
-     * @param mixed $value
+     * @param string|string[] $value
      * @param array $config
      * @return string[]|null список email
      * @throws \yii\base\Exception
      * @throws \yii\base\Exception
      * @throws \yii\base\Exception
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = null)
     {
-        if (! isset($value)) {
+        if ($value === null || $value === '' || $value === []) {
             return null;
         }
 
@@ -76,20 +73,14 @@ class EmailsValidator extends AbstractValidator
     }
 
     /**
-     * {@inheritDoc}
-     * @see \yii\validators\Validator::validateAttribute()
+     * Форматирует список email в строку.
+     *
+     * @param mixed $value
+     * @param array|null $config
+     * @return string|void
      */
-    public function validateAttribute($model, $attribute)
+    public static function format($value, array $config = null)
     {
-        try {
-            $value = self::parse($model->{$attribute});
-            if ($value === null && ! $this->skipOnEmpty) {
-                throw new Exception('Необходимо заполнить значение');
-            }
-
-            $model->{$attribute} = implode(', ', $value);
-        } catch (Throwable $ex) {
-            $this->addError($model, $attribute, $ex->getMessage(), ['value' => $model->{$attribute}]);
-        }
+        return is_array($value) ? implode(', ', $value) : (string)$value;
     }
 }

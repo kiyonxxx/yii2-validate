@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 07:06:44
  */
 
 declare(strict_types = 1);
@@ -15,12 +16,10 @@ use yii\widgets\InputWidget;
 /**
  * Ввиджет поля ввода datetime с типом checkbox.
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 180702
+ * @noinspection PhpUnused
  */
 class TimeFlagWidget extends InputWidget
 {
-
     /** @var string datetime формат */
     public $format;
 

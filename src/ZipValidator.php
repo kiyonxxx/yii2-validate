@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright (c) 2019.
- *
- * @author Igor (Dicr) Tarasov, develop@dicr.org
+ * @copyright 2019-2020 Dicr http://dicr.org
+ * @author Igor A Tarasov <develop@dicr.org>
+ * @license proprietary
+ * @version 08.03.20 06:07:12
  */
 
 declare(strict_types = 1);
@@ -14,9 +15,7 @@ use yii\helpers\ArrayHelper;
 /**
  * Валидатор почтовых индексов
  *
- * @author Igor (Dicr) Tarasov <develop@dicr.org>
- * @version 2019
- *
+ * @noinspection PhpUnused
  */
 class ZipValidator extends AbstractValidator
 {
@@ -36,7 +35,7 @@ class ZipValidator extends AbstractValidator
     {
         $digits = ArrayHelper::getValue($config, 'digits', 6);
 
-        $value = trim($value);
+        $value = trim((string)$value);
         if ($value === '') {
             return null;
         }
@@ -58,13 +57,13 @@ class ZipValidator extends AbstractValidator
      * - digits - кол-во цифр
      * @return string
      */
-    public static function format(int $value, array $config = [])
+    public static function format($value, array $config = null)
     {
         if (empty($value)) {
             return '';
         }
 
-        $digits = ArrayHelper::getValue($config, 'digits', 6);
+        $digits = ArrayHelper::getValue($config ?: [], 'digits', 6);
 
         return sprintf('%0' . $digits . 'd', $value);
     }
