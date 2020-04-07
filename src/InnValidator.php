@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:33:00
+ * @version 07.04.20 14:50:35
  */
 
 declare(strict_types = 1);
@@ -35,7 +35,7 @@ class InnValidator extends AbstractValidator
 
         $n = (string)$value;
 
-        // 10-значиный вариант для физических лиц
+        // 10-значный вариант для физических лиц
         if (preg_match('~^\d{10}$~um', $n)) {
             $n9 = ((2 * $n[0] + 4 * $n[1] + 10 * $n[2] + 3 * $n[3] + 5 * $n[4] + 9 * $n[5] + 4 * $n[6] + 6 * $n[7] +
                         8 * $n[8]) % 11) % 10;

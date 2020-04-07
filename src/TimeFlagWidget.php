@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:06:44
+ * @version 07.04.20 14:50:56
  */
 
 declare(strict_types = 1);
@@ -14,7 +14,7 @@ use yii\helpers\Html;
 use yii\widgets\InputWidget;
 
 /**
- * Ввиджет поля ввода datetime с типом checkbox.
+ * Виджет поля ввода datetime с типом checkbox.
  *
  * @noinspection PhpUnused
  */

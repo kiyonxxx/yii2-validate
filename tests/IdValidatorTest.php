@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:29:37
+ * @version 07.04.20 14:46:53
  */
 
 /** @noinspection PhpMethodMayBeStaticInspection */
@@ -33,6 +33,9 @@ class IdValidatorTest extends TestCase
         self::assertSame('', IdValidator::format(0));
     }
 
+    /**
+     * @throws \dicr\validate\ValidateException
+     */
     public function testId()
     {
         self::assertSame(1234, IdValidator::parse(1234));

@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:12:21
+ * @version 07.04.20 14:51:27
  */
 
 declare(strict_types = 1);
@@ -35,7 +35,7 @@ abstract class AbstractValidator extends Validator
     abstract public static function parse($value, array $config = null);
 
     /**
-     * Фильтрует значение, приводя к типу (отбразывая некорректные)
+     * Фильтрует значение, приводя к типу (отбрасывая некорректные)
      *
      * @param mixed $value
      * @param array $config
@@ -54,7 +54,7 @@ abstract class AbstractValidator extends Validator
     /**
      * Форматирует значение.
      *
-     * @param mixed $value тип значения зависит от валидатора и должнен быть указан в реализуемом классе
+     * @param mixed $value тип значения зависит от валидатора и должен быть указан в реализуемом классе
      * @param array|null $config параметры форматирования
      * @return string
      */
@@ -63,6 +63,7 @@ abstract class AbstractValidator extends Validator
     /**
      * {@inheritDoc}
      * @see \yii\validators\Validator::validateValue()
+     * @noinspection PhpUnused
      */
     protected function validateValue($value)
     {
@@ -80,7 +81,7 @@ abstract class AbstractValidator extends Validator
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      * @see \yii\validators\Validator::validateAttribute()
      */
     public function validateAttribute($model, $attribute)

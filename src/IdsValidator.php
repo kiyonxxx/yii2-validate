@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:22:47
+ * @version 07.04.20 14:50:17
  */
 
 declare(strict_types = 1);
@@ -50,7 +50,7 @@ class IdsValidator extends AbstractValidator
     }
 
     /**
-     * Фильтрует массив id, удаляя некорретные значения.
+     * Фильтрует массив id, удаляя некорректные значения.
      *
      * @param mixed $value
      * @param array $config

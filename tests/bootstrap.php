@@ -3,9 +3,10 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:29:37
+ * @version 07.04.20 14:49:30
  */
 
+/** @noinspection PhpUnused */
 declare(strict_types = 1);
 
 error_reporting(- 1);

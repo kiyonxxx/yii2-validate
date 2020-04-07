@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:33:27
+ * @version 07.04.20 14:50:08
  */
 
 declare(strict_types = 1);
@@ -39,7 +39,7 @@ class GeoValidator extends AbstractValidator
         if (! is_array($value)) {
             $matches = null;
             if (! preg_match('~^(\d+\.\d+)[\,\s]+(\d+\.\d+)$~', (string)$value, $matches)) {
-                throw new Exception('Некорректноый формат гео-координат: ' . $value);
+                throw new Exception('Некорректный формат гео-координат: ' . $value);
             }
 
             $value = [(float)$matches[1], (float)$matches[2]];
@@ -57,7 +57,7 @@ class GeoValidator extends AbstractValidator
     }
 
     /**
-     * Форматирует значение гео-координа в строку через запятую.
+     * Форматирует значение гео-координат в строку через запятую.
      *
      * @param string|float[2] $value
      * @param array|null $config

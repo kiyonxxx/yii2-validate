@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:23:17
+ * @version 07.04.20 14:49:10
  */
 
 declare(strict_types = 1);
@@ -16,6 +16,8 @@ use function is_string;
 
 /**
  * Валидатор E-Mail адресов в формате сроки через запятую.
+ *
+ * @noinspection PhpUnused
  */
 class EmailsValidator extends AbstractValidator
 {

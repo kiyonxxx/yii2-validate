@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:44:53
+ * @version 07.04.20 14:45:51
  */
 
 declare(strict_types = 1);
@@ -12,10 +12,13 @@ namespace dicr\validate;
 use yii\base\ErrorException;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+use function is_numeric;
 use function preg_match;
+use function preg_replace;
 use function sprintf;
 use function str_pad;
 use function strlen;
+use function trim;
 use const STR_PAD_LEFT;
 
 /**
@@ -50,10 +53,10 @@ class PhoneValidator extends AbstractValidator
         // ищем недопустимый символ
         $matches = null;
         if (preg_match('~([^+\d\s+\-()])~um', $value, $matches)) {
-            throw new Exception(sprintf('Недопусимый символ "%s" в номере телефона', $matches[1]));
+            throw new Exception(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
         }
 
-        // очищаем линие символы (нельзя в int, чтобы не потерять начальные нули)
+        // очищаем лишние символы (нельзя в int, чтобы не потерять начальные нули)
         $phone = preg_replace('~[\D]+~um', '', $value);
 
         // проверяем длину
@@ -72,17 +75,28 @@ class PhoneValidator extends AbstractValidator
     /**
      * Форматирование телефона в строку.
      *
-     * @param mixed $value
+     * @param string|int|null $value
      * @param array|null $config
      * - int $country код страны
      * - int $region код региона по-умолчанию
      * @return string|void
      * @throws \yii\base\ErrorException
+     * @throws \yii\base\Exception
      */
     public static function format($value, array $config = null)
     {
         $country = (int)ArrayHelper::getValue($config ?: [], 'country');
         $region = (int)ArrayHelper::getValue($config ?: [], 'region');
+
+        $value = trim($value);
+        if ($value === '') {
+            return '';
+        }
+
+        // конвертируем в int
+        if (! is_numeric($value)) {
+            $value = self::parse($value);
+        }
 
         // дополняем строку до полного размера
         $value = str_pad((string)$value, 12, '0', STR_PAD_LEFT);

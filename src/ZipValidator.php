@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:07:12
+ * @version 07.04.20 14:48:18
  */
 
 declare(strict_types = 1);
@@ -31,9 +31,9 @@ class ZipValidator extends AbstractValidator
      * @return int|null
      * @throws Exception
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = null)
     {
-        $digits = ArrayHelper::getValue($config, 'digits', 6);
+        $digits = ArrayHelper::getValue($config ?? [], 'digits', 6);
 
         $value = trim((string)$value);
         if ($value === '') {

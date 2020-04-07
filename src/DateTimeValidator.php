@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 06:18:01
+ * @version 07.04.20 14:46:53
  */
 
 declare(strict_types = 1);
@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
 class DateTimeValidator extends AbstractValidator
 {
     /** @var string default date time format */
-    const FORMAT_DEFAULT = 'Y-m-d H:i:s';
+    public const FORMAT_DEFAULT = 'Y-m-d H:i:s';
 
     /** @var string */
     public $format = self::FORMAT_DEFAULT;

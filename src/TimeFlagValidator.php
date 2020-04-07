@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:06:25
+ * @version 07.04.20 14:50:49
  */
 
 declare(strict_types = 1);
@@ -95,10 +95,10 @@ class TimeFlagValidator extends AbstractValidator
             return date($format, $value);
         }
 
-        // сроковая дата
+        // строковая дата
         $value = strtotime($value);
         if ($value <= 0) {
-            throw new Exception('Некоректный форматы флага/даты');
+            throw new Exception('Некорректный форматы флага/даты');
         }
 
         return date($format, $value);
