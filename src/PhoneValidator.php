@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:45:51
+ * @version 19.04.20 00:33:54
  */
 
 declare(strict_types = 1);
@@ -88,7 +88,7 @@ class PhoneValidator extends AbstractValidator
         $country = (int)ArrayHelper::getValue($config ?: [], 'country');
         $region = (int)ArrayHelper::getValue($config ?: [], 'region');
 
-        $value = trim($value);
+        $value = trim((string)$value);
         if ($value === '') {
             return '';
         }
