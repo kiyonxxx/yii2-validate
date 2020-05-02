@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 19.04.20 00:33:54
+ * @version 02.05.20 13:58:00
  */
 
 declare(strict_types = 1);
@@ -56,7 +56,7 @@ class PhoneValidator extends AbstractValidator
             throw new Exception(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
         }
 
-        // очищаем лишние символы (нельзя в int, чтобы не потерять начальные нули)
+        // очищаем линие символы (нельзя в int, чтобы не потерять начальные нули)
         $phone = preg_replace('~[\D]+~um', '', $value);
 
         // проверяем длину
@@ -88,7 +88,7 @@ class PhoneValidator extends AbstractValidator
         $country = (int)ArrayHelper::getValue($config ?: [], 'country');
         $region = (int)ArrayHelper::getValue($config ?: [], 'region');
 
-        $value = trim((string)$value);
+        $value = trim($value);
         if ($value === '') {
             return '';
         }
