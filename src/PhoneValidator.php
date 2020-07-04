@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.05.20 13:58:00
+ * @version 04.07.20 13:00:56
  */
 
 declare(strict_types = 1);
@@ -40,7 +40,7 @@ class PhoneValidator extends AbstractValidator
      * @param $value
      * @param array|null $config
      * @return int|null цифры номера телефона
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public static function parse($value, array $config = null)
     {
@@ -56,7 +56,7 @@ class PhoneValidator extends AbstractValidator
             throw new Exception(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
         }
 
-        // очищаем линие символы (нельзя в int, чтобы не потерять начальные нули)
+        // очищаем лишние символы (нельзя в int, чтобы не потерять начальные нули)
         $phone = preg_replace('~[\D]+~um', '', $value);
 
         // проверяем длину
@@ -80,8 +80,8 @@ class PhoneValidator extends AbstractValidator
      * - int $country код страны
      * - int $region код региона по-умолчанию
      * @return string|void
-     * @throws \yii\base\ErrorException
-     * @throws \yii\base\Exception
+     * @throws ErrorException
+     * @throws Exception
      */
     public static function format($value, array $config = null)
     {

@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:46:53
+ * @version 04.07.20 12:59:57
  */
 
 /** @noinspection PhpMethodMayBeStaticInspection */
@@ -11,6 +11,7 @@ declare(strict_types = 1);
 namespace dicr\tests;
 
 use dicr\validate\IdValidator;
+use dicr\validate\ValidateException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class IdValidatorTest extends TestCase
 {
     /**
-     * @throws \dicr\validate\ValidateException
+     * @throws ValidateException
      */
     public function testEmpty()
     {
@@ -34,7 +35,7 @@ class IdValidatorTest extends TestCase
     }
 
     /**
-     * @throws \dicr\validate\ValidateException
+     * @throws ValidateException
      */
     public function testId()
     {

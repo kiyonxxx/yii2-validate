@@ -3,13 +3,14 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:50:56
+ * @version 04.07.20 13:00:36
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
 
@@ -25,8 +26,8 @@ class TimeFlagWidget extends InputWidget
 
     /**
      * {@inheritDoc}
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
+     * @throws InvalidConfigException
      * @see \yii\base\Widget::run()
      */
     public function run()

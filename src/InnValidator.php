@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:50:35
+ * @version 04.07.20 09:27:14
  */
 
 declare(strict_types = 1);
@@ -25,7 +25,7 @@ class InnValidator extends AbstractValidator
      * @param string|int $value
      * @param array|null $config
      * @return int|null
-     * @throws \yii\base\Exception некорректное значение
+     * @throws Exception некорректное значение
      */
     public static function parse($value, array $config = null)
     {

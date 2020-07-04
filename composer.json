@@ -1,7 +1,7 @@
 {
     "name": "dicr/yii2-validate",
     "type": "yii2-extension",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "description": "Validation components for Yii2",
     "authors": [
         {
@@ -29,12 +29,12 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=7.2",
+        "php": "~7.2",
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "~8.2"
+        "phpunit/phpunit": "~8.5"
     },
     "repositories": [
         {

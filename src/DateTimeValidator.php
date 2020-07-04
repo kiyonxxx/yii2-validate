@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:46:53
+ * @version 04.07.20 13:00:36
  */
 
 declare(strict_types = 1);
@@ -29,7 +29,7 @@ class DateTimeValidator extends AbstractValidator
 
     /**
      * {@inheritDoc}
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      * @see \yii\validators\Validator::init()
      */
     public function init()
@@ -49,7 +49,7 @@ class DateTimeValidator extends AbstractValidator
      * @param mixed $value
      * @param array $config
      * @return int|null
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function parse($value, array $config = null)
     {

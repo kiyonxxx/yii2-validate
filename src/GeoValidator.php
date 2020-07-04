@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 07.04.20 14:50:08
+ * @version 04.07.20 09:27:14
  */
 
 declare(strict_types = 1);
@@ -28,7 +28,7 @@ class GeoValidator extends AbstractValidator
      * @param string|float[] $value
      * @param array|null $config
      * @return float[]|null список email
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public static function parse($value, array $config = null)
     {

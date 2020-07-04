@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:07:40
+ * @version 04.07.20 09:27:14
  */
 
 declare(strict_types = 1);
@@ -26,7 +26,7 @@ use function reset;
  */
 class ValidateException extends Exception
 {
-    /** @var \yii\base\Model */
+    /** @var Model */
     protected $model;
 
     /**
@@ -58,7 +58,7 @@ class ValidateException extends Exception
     /**
      * Формирует сообщение об ошибке из ошибок модели.
      *
-     * @param \yii\base\Model $model
+     * @param Model $model
      * @return string
      */
     public static function messageFromModel(Model $model)
@@ -106,7 +106,7 @@ class ValidateException extends Exception
     /**
      * Возвращает модель.
      *
-     * @return \yii\base\Model
+     * @return Model
      */
     public function getModel()
     {

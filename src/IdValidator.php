@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.03.20 07:29:37
+ * @version 04.07.20 09:27:14
  */
 
 declare(strict_types = 1);
@@ -21,7 +21,7 @@ class IdValidator extends AbstractValidator
      * @param mixed $value
      * @param array $config
      * @return int|null
-     * @throws \dicr\validate\ValidateException
+     * @throws ValidateException
      */
     public static function parse($value, array $config = null)
     {
