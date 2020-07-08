@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 13:00:36
+ * @version 08.07.20 14:07:23
  */
 
 declare(strict_types = 1);
@@ -12,6 +12,8 @@ namespace dicr\validate;
 use InvalidArgumentException;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
+use function is_numeric;
+use function is_string;
 
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
@@ -28,12 +30,13 @@ class DateTimeValidator extends AbstractValidator
     public $format = self::FORMAT_DEFAULT;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      * @throws InvalidConfigException
-     * @see \yii\validators\Validator::init()
      */
     public function init()
     {
+        parent::init();
+
         if (strncmp($this->format, 'php:', 4) === 0) {
             $this->format = substr($this->format, 4);
         }
@@ -46,9 +49,9 @@ class DateTimeValidator extends AbstractValidator
     /**
      * Парсит значение даты/времени из строки.
      *
-     * @param mixed $value
+     * @param string $value
      * @param array $config
-     * @return int|null
+     * @return string|null
      * @throws InvalidArgumentException
      */
     public static function parse($value, array $config = null)
@@ -63,20 +66,30 @@ class DateTimeValidator extends AbstractValidator
             throw new InvalidArgumentException('Некорректное значение даты/времени: ' . $value);
         }
 
-        return $time;
+        return date('d.m.y H:i:s', $time);
     }
 
     /**
      * Форматирует значение в строку.
      *
-     * @param int $value
+     * @param string|int $value
      * @param array|null $config
      * - string $format php-формат date
      * @return string|void
      */
     public static function format($value, array $config = null)
     {
-        if ($value <= 0) {
+        if (empty($value)) {
+            return null;
+        }
+
+        if (is_numeric($value)) {
+            $value = (int)$value;
+        } elseif (is_string($value)) {
+            $value = (int)self::parse($value);
+        }
+
+        if (empty($value)) {
             throw new InvalidArgumentException('value: ' . $value);
         }
 
