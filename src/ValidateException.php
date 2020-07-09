@@ -3,11 +3,10 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 09:27:14
+ * @version 09.07.20 14:03:30
  */
 
 declare(strict_types = 1);
-
 namespace dicr\validate;
 
 use yii\base\Exception;
@@ -21,8 +20,6 @@ use function reset;
 
 /**
  * Ошибка валидации модели.
- *
- * @noinspection PhpUnused
  */
 class ValidateException extends Exception
 {

@@ -3,11 +3,14 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 09:27:14
+ * @version 09.07.20 14:15:37
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
+
+use function ctype_digit;
+use function is_scalar;
 
 /**
  * Валидация ID
@@ -23,36 +26,35 @@ class IdValidator extends AbstractValidator
      * @return int|null
      * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        if ($value === null || $value === '') {
+        if (empty($value)) {
             return null;
         }
 
-        if (is_scalar($value) && preg_match('~^\d+$~', (string)$value)) {
-            $id = (int)$value;
-
-            if ($id === 0) {
-                return null;
-            }
-
-            if ($id > 0) {
-                return $id;
-            }
+        if (! is_scalar($value)) {
+            throw new ValidateException('Некорректный тип значения id:');
         }
 
-        throw new ValidateException('Некорректный id: ' . $value);
+        if (! ctype_digit($value)) {
+            throw new ValidateException('Некорректный формат id: ' . $value);
+        }
+
+        $value = (int)$value;
+        return empty($value) ? null : $value;
     }
 
     /**
      * Конвертирует в строку.
      *
-     * @param int $value
-     * @param array|null $config
+     * @param int|string|null $value
+     * @param array $config
      * @return string
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        return empty($value) ? '' : (string)(int)$value;
+        $value = self::parse($value);
+        return empty($value) ? '' : (string)$value;
     }
 }

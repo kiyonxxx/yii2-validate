@@ -3,13 +3,12 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 09:27:14
+ * @version 09.07.20 14:13:19
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use yii\validators\Validator;
 
 /**
@@ -32,21 +31,21 @@ abstract class AbstractValidator extends Validator
      * @return mixed|null приведенное к типу значение или null если пустое
      * @throws ValidateException значение некорректное
      */
-    abstract public static function parse($value, array $config = null);
+    abstract public static function parse($value, array $config = []);
 
     /**
      * Фильтрует значение, приводя к типу (отбрасывая некорректные)
      *
      * @param mixed $value
      * @param array $config
-     * @return mixed|null приведенное к типу значение или null, если не корректное
+     * @return mixed приведенное к типу значение
      */
-    public static function filter($value, array $config = null)
+    public static function filter($value, array $config = [])
     {
         try {
             return static::parse($value, $config);
         } /** @noinspection BadExceptionsProcessingInspection */
-        catch (Throwable $ex) {
+        catch (ValidateException $ex) {
             return null;
         }
     }
@@ -55,24 +54,24 @@ abstract class AbstractValidator extends Validator
      * Форматирует значение.
      *
      * @param mixed $value тип значения зависит от валидатора и должен быть указан в реализуемом классе
-     * @param array|null $config параметры форматирования
+     * @param array $config параметры форматирования
      * @return string
+     * @throws ValidateException значение некорректное
      */
-    abstract public static function format($value, array $config = null);
+    abstract public static function format($value, array $config = []);
 
     /**
      * @inheritDoc
-     * @noinspection PhpUnused
      */
     protected function validateValue($value)
     {
         // парсим значение
         try {
-            $val = static::parse($value, $this->attributes);
+            $val = static::parse($value);
             if ($val === null && ! $this->skipOnEmpty) {
                 return ['Требуется значение'];
             }
-        } catch (Throwable $ex) {
+        } catch (ValidateException $ex) {
             return [$ex->getMessage()];
         }
 
@@ -93,7 +92,7 @@ abstract class AbstractValidator extends Validator
             }
 
             $model->{$attribute} = $val;
-        } catch (Throwable $ex) {
+        } catch (ValidateException $ex) {
             $this->addError($model, $attribute, $ex->getMessage(), ['value' => $value]);
         }
     }

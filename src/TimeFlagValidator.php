@@ -3,17 +3,17 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 13:01:20
+ * @version 09.07.20 14:17:30
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use yii\base\Exception;
-use yii\helpers\ArrayHelper;
+use function gettype;
 use function in_array;
 use function is_bool;
-use function is_string;
+use function is_scalar;
+use function strtotime;
 
 /**
  * Валидатор данных типа флаг со значениями null/datetime, который конвертирует значения типа true в текущее
@@ -25,8 +25,6 @@ use function is_string;
  * "Y-m-d H:i:s", int => date(формат, значение)
  *
  * Используется с полями типа DATETIME/null, например в поле типа disabled, published, ....
- *
- * @noinspection PhpUnused
  */
 class TimeFlagValidator extends AbstractValidator
 {
@@ -45,15 +43,19 @@ class TimeFlagValidator extends AbstractValidator
      * @param array $config
      * - format - формат даты и времени (по-умолчанию Y-m-d H:i:s)
      * @return null|string значение в виде даты
-     * @throws Exception
+     * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        $format = ArrayHelper::getValue($config, 'format', 'Y-m-d H:i:s');
+        $format = $config['format'] ?? 'Y-m-d H:i:s';
 
         // empty
         if (empty($value)) {
             return null;
+        }
+
+        if (! is_scalar($value)) {
+            throw new ValidateException('Некорректный тип значения даты/времени: ' . gettype($value));
         }
 
         // boolean
@@ -61,7 +63,7 @@ class TimeFlagValidator extends AbstractValidator
             return $value ? date($format) : null;
         }
 
-        // spaces
+        // конвертируем в строку
         $value = trim($value);
         if ($value === '') {
             return null;
@@ -81,7 +83,7 @@ class TimeFlagValidator extends AbstractValidator
             $value = (int)$value;
 
             if ($value < 0) {
-                throw new Exception('Некорректное значение флага/даты');
+                throw new ValidateException('Некорректное значение флага/даты');
             }
 
             if (empty($value)) {
@@ -92,13 +94,14 @@ class TimeFlagValidator extends AbstractValidator
                 return date($format);
             }
 
+            // как timestamp
             return date($format, $value);
         }
 
         // строковая дата
         $value = strtotime($value);
-        if ($value <= 0) {
-            throw new Exception('Некорректный форматы флага/даты');
+        if ($value === false || $value <= 0) {
+            throw new ValidateException('Некорректный форматы флага/даты');
         }
 
         return date($format, $value);
@@ -108,19 +111,15 @@ class TimeFlagValidator extends AbstractValidator
      * Форматирует в строку.
      *
      * @param int|string|null $value
-     * @param array|null $config
+     * @param array $config
      * @return string|void
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        if (empty($value)) {
-            return '';
-        }
+        $format = $config['format'] ?? 'Y-m-d H:i:s';
 
-        if (is_string($value)) {
-            return $value;
-        }
-
-        return date('Y-m-d H:i:s', (int)$value);
+        $value = self::parse($value);
+        return empty($value) ? '' : date($format, strtotime($value));
     }
 }

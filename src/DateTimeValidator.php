@@ -3,47 +3,62 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.07.20 14:07:23
+ * @version 09.07.20 14:13:57
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use InvalidArgumentException;
-use yii\base\InvalidConfigException;
-use yii\helpers\ArrayHelper;
 use function is_numeric;
 use function is_string;
+use function strtotime;
 
 /**
  * Валидатор даты/времени, с поддержкой значения элемента
  * datetime-local в формате Y-m-d\TH:i:s
- *
- * @noinspection PhpUnused
  */
 class DateTimeValidator extends AbstractValidator
 {
     /** @var string default date time format */
     public const FORMAT_DEFAULT = 'Y-m-d H:i:s';
 
-    /** @var string */
-    public $format = self::FORMAT_DEFAULT;
-
     /**
-     * @inheritDoc
-     * @throws InvalidConfigException
+     * Конвертирует дату/время в число.
+     *
+     * @param string|int|null $value
+     * @return int
+     * @throws ValidateException
      */
-    public function init()
+    private static function timestamp($value)
     {
-        parent::init();
-
-        if (strncmp($this->format, 'php:', 4) === 0) {
-            $this->format = substr($this->format, 4);
+        // пустые значения
+        if (empty($value)) {
+            return 0;
         }
 
-        if ($this->format === '') {
-            throw new InvalidConfigException('format');
+        // числовое значение
+        if (is_numeric($value)) {
+            $time = (int)$value;
+
+            if ($time < 0) {
+                throw new ValidateException('Отрицательное значение времени даты');
+            }
+
+            return $time;
         }
+
+        // строковое значение
+        if (is_string($value)) {
+            $time = strtotime($value);
+
+            if ($time === false) {
+                throw new ValidateException('Некорректный формат даты/времени');
+            }
+
+            return $time;
+        }
+
+        throw new ValidateException('Некорректный тип значения даты');
     }
 
     /**
@@ -52,48 +67,33 @@ class DateTimeValidator extends AbstractValidator
      * @param string $value
      * @param array $config
      * @return string|null
-     * @throws InvalidArgumentException
+     * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        $value = trim($value);
-        if ($value === '') {
-            return null;
-        }
+        // парсим в число
+        $time = self::timestamp($value);
 
-        $time = strtotime($value);
-        if ($time <= 0) {
-            throw new InvalidArgumentException('Некорректное значение даты/времени: ' . $value);
-        }
-
-        return date('d.m.y H:i:s', $time);
+        // форматируем в datetime
+        return empty($value) ? null : date('d.m.y H:i:s', $time);
     }
 
     /**
      * Форматирует значение в строку.
      *
      * @param string|int $value
-     * @param array|null $config
+     * @param array $config
      * - string $format php-формат date
-     * @return string|void
+     * @return string
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        if (empty($value)) {
-            return null;
-        }
+        $format = $config['format'] ?? self::FORMAT_DEFAULT;
 
-        if (is_numeric($value)) {
-            $value = (int)$value;
-        } elseif (is_string($value)) {
-            $value = (int)self::parse($value);
-        }
+        // парсим значение в datetime
+        $time = self::timestamp($value);
 
-        if (empty($value)) {
-            throw new InvalidArgumentException('value: ' . $value);
-        }
-
-        $format = ArrayHelper::getValue($config ?: [], 'format', self::FORMAT_DEFAULT);
-        return date($format, $value);
+        return empty($time) ? '' : date($format, $value);
     }
 }

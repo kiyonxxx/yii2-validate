@@ -3,95 +3,123 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 09:27:14
+ * @version 09.07.20 14:20:06
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
-use yii\base\Exception;
+use function array_filter;
+use function array_map;
+use function array_unique;
+use function array_values;
 use function gettype;
+use function implode;
 use function is_array;
+use function is_scalar;
+use function preg_split;
+use function sort;
+use function trim;
+use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * Валидатор массива ID.
- *
- * @noinspection PhpUnused
  */
 class IdsValidator extends AbstractValidator
 {
     /**
      * Парсит массив id
      *
-     * @param mixed $value
+     * @param int[]|string|null $value
      * @param array $config
      * @return int[]|null если пустой то null
-     * @throws Exception
+     * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        if ($value === null || $value === '' || $value === []) {
+        if (empty($value)) {
             return null;
         }
 
+        // строка через пробелы или запятые
+        if (is_scalar($value)) {
+            $value = (array)preg_split('~[\s\,]+~u', trim((string)$value));
+        }
+
+        // проверяем массив
         if (! is_array($value)) {
-            throw new Exception('Некорректный тип значения: ' . gettype($value));
+            throw new ValidateException('Некорректный тип значения: ' . gettype($value));
         }
 
-        foreach ($value as &$id) {
+        // обходим значения
+        $value = array_map(static function($id) {
             $id = IdValidator::parse($id);
-            if ($id === null) {
-                throw new ValidateException('Некорректное значение id');
-            }
-        }
 
-        return $value ?: null;
+            if (empty($id)) {
+                throw new ValidateException('Пустое значение id');
+            }
+
+            return $id;
+        }, array_values($value));
+
+        sort($value);
+        return $value ? array_unique($value) : null;
     }
 
     /**
      * Фильтрует массив id, удаляя некорректные значения.
      *
-     * @param mixed $value
+     * @param int[]|string|null $value
      * @param array $config
-     * @return int[]|null массив id или null
+     * @return int[] массив id или null
      */
-    public static function filter($value, array $config = null)
+    public static function filter($value, array $config = [])
     {
-        if ($value === null || $value === '' || $value === []) {
-            return null;
+        if (empty($value)) {
+            return [];
         }
 
+        // строка через пробелы или запятые
+        if (is_scalar($value)) {
+            $value = (array)preg_split('~[\s\,]+~u', trim((string)$value), - 1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        // проверяем массив
         if (! is_array($value)) {
-            $value = [$value];
+            return [];
         }
 
-        $ids = [];
-        foreach ($value as $id) {
+        // обходим значения
+        $value = array_map(static function($id) {
             try {
                 $id = IdValidator::parse($id);
             } /** @noinspection BadExceptionsProcessingInspection */
-            catch (Throwable $ex) {
-                $id = null;
+            catch (ValidateException $ex) {
+                $id = 0;
             }
 
-            if ($id !== null) {
-                $ids[] = $id;
-            }
-        }
+            return $id;
+        }, array_values($value));
 
-        return $ids ?: null;
+        // фильтруем пустые значения
+        $value = array_filter($value, static function($id) {
+            return $id > 0;
+        });
+
+        sort($value);
+        return array_unique($value);
     }
 
     /**
      * Конвертирует в строку.
      *
      * @param int[]|string $value
-     * @param array|null $config
+     * @param array $config
      * @return string
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        return is_array($value) ? implode(',', $value) : (string)$value;
+        return implode(', ', self::parse($value));
     }
 }

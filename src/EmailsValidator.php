@@ -3,51 +3,46 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 09:27:14
+ * @version 09.07.20 14:14:27
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use yii\base\Exception;
 use yii\validators\EmailValidator;
 use function is_array;
-use function is_string;
+use function is_scalar;
 
 /**
  * Валидатор E-Mail адресов в формате сроки через запятую.
- *
- * @noinspection PhpUnused
  */
 class EmailsValidator extends AbstractValidator
 {
     /**
      * Парсит список Email из сроки
      *
-     * @param string|string[] $value
+     * @param string|string[]|null $value
      * @param array $config
      * @return string[]|null список email
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
+     * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        if ($value === null || $value === '' || $value === []) {
+        if (empty($value)) {
             return null;
         }
 
-        if (is_string($value)) {
-            $value = trim($value);
+        if (is_scalar($value)) {
+            $value = trim((string)$value);
             if ($value === '') {
                 return null;
             }
 
-            $value = preg_split('~[,\s]+~um', $value, - 1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split('~[,\s]+~u', $value, - 1, PREG_SPLIT_NO_EMPTY);
         }
 
         if (! is_array($value)) {
-            throw new Exception('Некорректный тип значения');
+            throw new ValidateException('Некорректный тип значения');
         }
 
         if (empty($value)) {
@@ -59,30 +54,27 @@ class EmailsValidator extends AbstractValidator
             'enableIDN' => true
         ]);
 
-        foreach ($value as $i => &$email) {
-            $email = trim($email);
-            if ($email === '') {
-                unset($value[$i]);
-            } else {
-                $error = null;
-                if (! $emailValidator->validate($email, $error)) {
-                    throw new Exception($error);
-                }
+        foreach ($value as $i => $email) {
+            $error = null;
+            if (! $emailValidator->validate($email, $error)) {
+                throw new ValidateException($error);
             }
         }
 
-        return $value ?: null;
+        return $value;
     }
 
     /**
      * Форматирует список email в строку.
      *
      * @param mixed $value
-     * @param array|null $config
+     * @param array $config
      * @return string|void
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        return is_array($value) ? implode(', ', $value) : (string)$value;
+        $value = self::parse($value);
+        return empty($value) ? '' : implode(', ', $value);
     }
 }

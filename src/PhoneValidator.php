@@ -3,28 +3,23 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 06.07.20 06:13:00
+ * @version 09.07.20 14:16:24
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use yii\base\ErrorException;
-use yii\base\Exception;
-use yii\helpers\ArrayHelper;
-use function is_numeric;
+use function gettype;
+use function is_scalar;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
 use function str_pad;
 use function strlen;
-use function trim;
 use const STR_PAD_LEFT;
 
 /**
  * Валидатор телефона.
- *
- * @noinspection PhpUnused
  */
 class PhoneValidator extends AbstractValidator
 {
@@ -38,14 +33,18 @@ class PhoneValidator extends AbstractValidator
      * Парсит номер телефона
      *
      * @param $value
-     * @param array|null $config
+     * @param array $config
      * @return int|null цифры номера телефона
-     * @throws Exception
+     * @throws ValidateException
      */
-    public static function parse($value, array $config = null)
+    public static function parse($value, array $config = [])
     {
-        if ($value === null || $value === '') {
+        if (empty($value)) {
             return null;
+        }
+
+        if (! is_scalar($value)) {
+            throw new ValidateException('Некорректный тип значения: ' . gettype($value));
         }
 
         $value = (string)$value;
@@ -53,20 +52,25 @@ class PhoneValidator extends AbstractValidator
         // ищем недопустимый символ
         $matches = null;
         if (preg_match('~([^+\d\s+\-()])~um', $value, $matches)) {
-            throw new Exception(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
+            throw new ValidateException(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
         }
 
         // очищаем лишние символы (нельзя в int, чтобы не потерять начальные нули)
         $phone = preg_replace('~[\D]+~um', '', $value);
 
+        // пустой телефон
+        if ($phone === '' || $phone === '0') {
+            return null;
+        }
+
         // проверяем длину
         $length = strlen($phone);
         if ($length < 7) {
-            throw new Exception('Недостаточно цифр в номере телефона');
+            throw new ValidateException('Недостаточно цифр в номере телефона');
         }
 
         if ($length > 12) {
-            throw new Exception('Слишком много цифр в номере телефона');
+            throw new ValidateException('Слишком много цифр в номере телефона');
         }
 
         return (int)$phone;
@@ -76,26 +80,20 @@ class PhoneValidator extends AbstractValidator
      * Форматирование телефона в строку.
      *
      * @param string|int|null $value
-     * @param array|null $config
+     * @param array $config
      * - int $country код страны
      * - int $region код региона по-умолчанию
      * @return string|void
-     * @throws ErrorException
-     * @throws Exception
+     * @throws ValidateException
      */
-    public static function format($value, array $config = null)
+    public static function format($value, array $config = [])
     {
-        $country = (int)ArrayHelper::getValue($config ?: [], 'country');
-        $region = (int)ArrayHelper::getValue($config ?: [], 'region');
+        $country = (int)($config['country'] ?? 0);
+        $region = (int)($config['region'] ?? 0);
 
-        $value = trim((string)$value);
-        if ($value === '') {
+        $value = self::parse($value);
+        if (empty($value)) {
             return '';
-        }
-
-        // конвертируем в int
-        if (! is_numeric($value)) {
-            $value = self::parse($value);
         }
 
         // дополняем строку до полного размера
@@ -104,7 +102,7 @@ class PhoneValidator extends AbstractValidator
         // разбираем сроку на компоненты
         $matches = null;
         if (! preg_match('~^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$~um', $value, $matches)) {
-            throw new ErrorException('внутренняя ошибка: ' . $value);
+            throw new ValidateException('внутренняя ошибка: ' . $value);
         }
 
         $components = [
