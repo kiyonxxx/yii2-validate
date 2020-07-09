@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:29:05
+ * @version 09.07.20 14:30:11
  */
 
 declare(strict_types = 1);
@@ -16,13 +16,6 @@ use yii\validators\Validator;
  */
 abstract class AbstractValidator extends Validator
 {
-    /**
-     * @var bool допускать пустые значения
-     * Так как некоторые валидаторы, например ids[] могут возвращать пустые значения после проверки пустого массива,
-     * то по0умолчанию skipOnEmpty = false
-     */
-    public $skipOnEmpty = true;
-
     /**
      * Парсит значение, приводя к типу.
      *
