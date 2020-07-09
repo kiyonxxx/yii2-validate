@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:13:19
+ * @version 09.07.20 14:29:05
  */
 
 declare(strict_types = 1);
@@ -21,7 +21,7 @@ abstract class AbstractValidator extends Validator
      * Так как некоторые валидаторы, например ids[] могут возвращать пустые значения после проверки пустого массива,
      * то по0умолчанию skipOnEmpty = false
      */
-    public $skipOnEmpty = false;
+    public $skipOnEmpty = true;
 
     /**
      * Парсит значение, приводя к типу.
