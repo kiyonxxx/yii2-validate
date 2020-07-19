@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 20.07.20 03:47:04
+ * @version 20.07.20 03:49:46
  */
 
 declare(strict_types = 1);
@@ -77,7 +77,7 @@ class DateTimeValidator extends AbstractValidator
         $time = self::timestamp($value);
 
         // форматируем в datetime
-        return empty($value) ? null : date('Y-m-d H:i:s', $time);
+        return empty($time) ? null : date('Y-m-d H:i:s', $time);
     }
 
     /**
