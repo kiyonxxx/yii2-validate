@@ -3,12 +3,14 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:13:57
+ * @version 20.07.20 03:47:04
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use function date;
+use function gettype;
 use function is_numeric;
 use function is_string;
 use function strtotime;
@@ -52,13 +54,13 @@ class DateTimeValidator extends AbstractValidator
             $time = strtotime($value);
 
             if ($time === false) {
-                throw new ValidateException('Некорректный формат даты/времени');
+                throw new ValidateException('Некорректный формат даты/времени: ' . $value);
             }
 
             return $time;
         }
 
-        throw new ValidateException('Некорректный тип значения даты');
+        throw new ValidateException('Некорректный тип значения даты: ' . gettype($value));
     }
 
     /**
@@ -75,7 +77,7 @@ class DateTimeValidator extends AbstractValidator
         $time = self::timestamp($value);
 
         // форматируем в datetime
-        return empty($value) ? null : date('d.m.y H:i:s', $time);
+        return empty($value) ? null : date('Y-m-d H:i:s', $time);
     }
 
     /**
