@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:15:37
+ * @version 20.07.20 03:35:08
  */
 
 declare(strict_types = 1);
@@ -36,7 +36,7 @@ class IdValidator extends AbstractValidator
             throw new ValidateException('Некорректный тип значения id:');
         }
 
-        if (! ctype_digit($value)) {
+        if (! ctype_digit((string)$value)) {
             throw new ValidateException('Некорректный формат id: ' . $value);
         }
 
