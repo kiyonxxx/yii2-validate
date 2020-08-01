@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:03:30
+ * @version 01.08.20 14:12:58
  */
 
 declare(strict_types = 1);
@@ -65,7 +65,7 @@ class ValidateException extends Exception
         if ($model->hasErrors()) {
             $errors = [];
             foreach ($model->firstErrors as $attribute => $error) {
-                $errors[] = $attribute . ': ' . $error;
+                $errors[] = $attribute . ': ' . $error . ': ' . $model->{$attribute};
             }
 
             $message .= ': ' . implode('; ', $errors);
