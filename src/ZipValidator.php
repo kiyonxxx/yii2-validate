@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:47:49
+ * @version 02.08.20 21:51:28
  */
 
 declare(strict_types = 1);
@@ -69,7 +69,7 @@ class ZipValidator extends AbstractValidator
 
             return empty($value) ? '' : sprintf('%0' . $digits . 'd', $value);
         } catch (Throwable $ex) {
-            return '';
+            return (string)$value;
         }
     }
 }

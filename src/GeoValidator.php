@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:41:52
+ * @version 02.08.20 21:52:11
  */
 
 declare(strict_types = 1);
@@ -82,7 +82,7 @@ class GeoValidator extends AbstractValidator
             $value = self::parse($value);
             return empty($value) ? '' : implode(', ', $value);
         } catch (Throwable $ex) {
-            return '';
+            return is_array($value) ? implode(',', $value) : (string)$value;
         }
     }
 }

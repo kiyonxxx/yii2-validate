@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:46:09
+ * @version 02.08.20 21:53:05
  */
 
 declare(strict_types = 1);
@@ -123,7 +123,7 @@ class TimeFlagValidator extends AbstractValidator
             $value = self::parse($value);
             return empty($value) ? '' : date($format, strtotime($value));
         } catch (Throwable $ex) {
-            return '';
+            return (string)$value;
         }
     }
 }

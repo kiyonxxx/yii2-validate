@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:42:14
+ * @version 02.08.20 21:52:32
  */
 
 declare(strict_types = 1);
@@ -123,7 +123,7 @@ class IdsValidator extends AbstractValidator
         try {
             return implode(', ', self::parse($value));
         } catch (Throwable $ex) {
-            return '';
+            return is_array($value) ? implode(',', $value) : (string)$value;
         }
     }
 }

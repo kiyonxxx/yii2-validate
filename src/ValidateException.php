@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:46:52
+ * @version 02.08.20 21:50:14
  */
 
 declare(strict_types = 1);
@@ -15,6 +15,7 @@ use yii\base\Model;
 use function get_class;
 use function implode;
 use function is_array;
+use function is_scalar;
 use function is_string;
 use function reset;
 
@@ -65,7 +66,9 @@ class ValidateException extends Exception
         if ($model->hasErrors()) {
             $errors = [];
             foreach ($model->firstErrors as $attribute => $error) {
-                $errors[] = $attribute . ': ' . $error . ': ' . $model->{$attribute};
+                $value = $model->{$attribute};
+                $errors[] = $attribute . ': ' . $error . ': ' .
+                    (is_scalar($value) ? $value : get_class($value));
             }
 
             $message .= ': ' . implode('; ', $errors);
