@@ -1,14 +1,16 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:16:24
+ * @version 02.08.20 20:44:58
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use RuntimeException;
+use Throwable;
 use function gettype;
 use function is_scalar;
 use function preg_match;
@@ -37,7 +39,7 @@ class PhoneValidator extends AbstractValidator
      * @return int|null цифры номера телефона
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?int
     {
         if (empty($value)) {
             return null;
@@ -84,14 +86,18 @@ class PhoneValidator extends AbstractValidator
      * - int $country код страны
      * - int $region код региона по-умолчанию
      * @return string|void
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
         $country = (int)($config['country'] ?? 0);
         $region = (int)($config['region'] ?? 0);
 
-        $value = self::parse($value);
+        try {
+            $value = self::parse($value);
+        } catch (Throwable $ex) {
+            return (string)$value;
+        }
+
         if (empty($value)) {
             return '';
         }
@@ -102,7 +108,7 @@ class PhoneValidator extends AbstractValidator
         // разбираем сроку на компоненты
         $matches = null;
         if (! preg_match('~^(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})$~um', $value, $matches)) {
-            throw new ValidateException('внутренняя ошибка: ' . $value);
+            throw new RuntimeException('внутренняя ошибка: ' . $value);
         }
 
         $components = [

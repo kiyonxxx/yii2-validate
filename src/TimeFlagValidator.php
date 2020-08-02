@@ -1,14 +1,15 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:17:30
+ * @version 02.08.20 20:46:09
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function gettype;
 use function in_array;
 use function is_bool;
@@ -42,10 +43,10 @@ class TimeFlagValidator extends AbstractValidator
      *
      * @param array $config
      * - format - формат даты и времени (по-умолчанию Y-m-d H:i:s)
-     * @return null|string значение в виде даты
+     * @return string|null значение в виде даты
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?string
     {
         $format = $config['format'] ?? 'Y-m-d H:i:s';
 
@@ -112,14 +113,17 @@ class TimeFlagValidator extends AbstractValidator
      *
      * @param int|string|null $value
      * @param array $config
-     * @return string|void
-     * @throws ValidateException
+     * @return string
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
         $format = $config['format'] ?? 'Y-m-d H:i:s';
 
-        $value = self::parse($value);
-        return empty($value) ? '' : date($format, strtotime($value));
+        try {
+            $value = self::parse($value);
+            return empty($value) ? '' : date($format, strtotime($value));
+        } catch (Throwable $ex) {
+            return '';
+        }
     }
 }

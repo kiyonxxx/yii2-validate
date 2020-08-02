@@ -1,15 +1,17 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:20:06
+ * @version 02.08.20 20:41:52
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function count;
+use function implode;
 use function is_array;
 use function is_numeric;
 use function is_string;
@@ -29,7 +31,7 @@ class GeoValidator extends AbstractValidator
      * @return float[]|null список email
      * @throws ValidateException
      */
-    public static function parse($val, array $config = [])
+    public static function parse($val, array $config = []) : ?array
     {
         // пустые значения
         if (empty($val)) {
@@ -72,13 +74,15 @@ class GeoValidator extends AbstractValidator
      * @param string|float[]|null $value
      * @param array $config
      * @return string
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
-        // парсим в массив
-        $value = self::parse($value);
-
-        return empty($value) ? '' : implode(', ', $value);
+        try {
+            // парсим в массив
+            $value = self::parse($value);
+            return empty($value) ? '' : implode(', ', $value);
+        } catch (Throwable $ex) {
+            return '';
+        }
     }
 }

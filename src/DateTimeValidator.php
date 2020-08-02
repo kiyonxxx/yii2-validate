@@ -1,14 +1,15 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 20.07.20 03:49:46
+ * @version 02.08.20 20:41:14
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function date;
 use function gettype;
 use function is_numeric;
@@ -31,7 +32,7 @@ class DateTimeValidator extends AbstractValidator
      * @return int
      * @throws ValidateException
      */
-    private static function timestamp($value)
+    private static function timestamp($value) : int
     {
         // пустые значения
         if (empty($value)) {
@@ -71,7 +72,7 @@ class DateTimeValidator extends AbstractValidator
      * @return string|null
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?string
     {
         // парсим в число
         $time = self::timestamp($value);
@@ -87,15 +88,17 @@ class DateTimeValidator extends AbstractValidator
      * @param array $config
      * - string $format php-формат date
      * @return string
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
         $format = $config['format'] ?? self::FORMAT_DEFAULT;
 
         // парсим значение в datetime
-        $time = self::timestamp($value);
-
-        return empty($time) ? '' : date($format, $value);
+        try {
+            $time = self::timestamp($value);
+            return empty($time) ? '' : date($format, $value);
+        } catch (Throwable $ex) {
+            return (string)$value;
+        }
     }
 }

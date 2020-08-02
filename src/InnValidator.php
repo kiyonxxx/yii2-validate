@@ -1,14 +1,15 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:15:59
+ * @version 02.08.20 20:48:39
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function gettype;
 use function is_scalar;
 
@@ -27,7 +28,7 @@ class InnValidator extends AbstractValidator
      * @return int|null
      * @throws ValidateException некорректное значение
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?int
     {
         if (empty($value)) {
             return null;
@@ -73,11 +74,14 @@ class InnValidator extends AbstractValidator
      * @param string|int|null $value
      * @param array $config
      * @return string
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
-        $value = self::parse($value);
-        return empty($value) ? '' : (string)$value;
+        try {
+            $value = (string)self::parse($value);
+            return empty($value) ? '' : (string)$value;
+        } catch (Throwable $ex) {
+            return (string)$value;
+        }
     }
 }

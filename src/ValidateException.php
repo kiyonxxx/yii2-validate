@@ -1,9 +1,9 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.08.20 14:12:58
+ * @version 02.08.20 20:46:52
  */
 
 declare(strict_types = 1);
@@ -23,7 +23,7 @@ use function reset;
  */
 class ValidateException extends Exception
 {
-    /** @var Model */
+    /** @var Model|null */
     protected $model;
 
     /**
@@ -58,7 +58,7 @@ class ValidateException extends Exception
      * @param Model $model
      * @return string
      */
-    public static function messageFromModel(Model $model)
+    public static function messageFromModel(Model $model) : string
     {
         $message = get_class($model);
 
@@ -80,7 +80,7 @@ class ValidateException extends Exception
      * @param array $errors массив ошибок string[], либо attribute => string|string[]
      * @return string
      */
-    public static function messageFromArray(array $errors)
+    public static function messageFromArray(array $errors) : string
     {
         $parts = [];
 
@@ -103,9 +103,9 @@ class ValidateException extends Exception
     /**
      * Возвращает модель.
      *
-     * @return Model
+     * @return Model|null
      */
-    public function getModel()
+    public function getModel() : ?Model
     {
         return $this->model;
     }

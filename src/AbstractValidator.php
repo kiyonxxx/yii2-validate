@@ -1,9 +1,9 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:30:11
+ * @version 02.08.20 20:36:27
  */
 
 declare(strict_types = 1);
@@ -51,12 +51,12 @@ abstract class AbstractValidator extends Validator
      * @return string
      * @throws ValidateException значение некорректное
      */
-    abstract public static function format($value, array $config = []);
+    abstract public static function format($value, array $config = []) : string;
 
     /**
      * @inheritDoc
      */
-    protected function validateValue($value)
+    protected function validateValue($value) : ?array
     {
         // парсим значение
         try {
@@ -74,7 +74,7 @@ abstract class AbstractValidator extends Validator
     /**
      * @inheritDoc
      */
-    public function validateAttribute($model, $attribute)
+    public function validateAttribute($model, $attribute) : void
     {
         $value = $model->{$attribute};
 

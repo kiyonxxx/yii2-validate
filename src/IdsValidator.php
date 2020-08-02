@@ -1,14 +1,15 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:20:06
+ * @version 02.08.20 20:42:14
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function array_filter;
 use function array_map;
 use function array_unique;
@@ -35,7 +36,7 @@ class IdsValidator extends AbstractValidator
      * @return int[]|null если пустой то null
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?array
     {
         if (empty($value)) {
             return null;
@@ -73,7 +74,7 @@ class IdsValidator extends AbstractValidator
      * @param array $config
      * @return int[] массив id или null
      */
-    public static function filter($value, array $config = [])
+    public static function filter($value, array $config = []) : ?array
     {
         if (empty($value)) {
             return [];
@@ -116,10 +117,13 @@ class IdsValidator extends AbstractValidator
      * @param int[]|string $value
      * @param array $config
      * @return string
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
-        return implode(', ', self::parse($value));
+        try {
+            return implode(', ', self::parse($value));
+        } catch (Throwable $ex) {
+            return '';
+        }
     }
 }

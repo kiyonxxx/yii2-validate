@@ -1,15 +1,17 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:14:27
+ * @version 02.08.20 20:41:35
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use yii\validators\EmailValidator;
+use function implode;
 use function is_array;
 use function is_scalar;
 
@@ -26,7 +28,7 @@ class EmailsValidator extends AbstractValidator
      * @return string[]|null список email
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?array
     {
         if (empty($value)) {
             return null;
@@ -69,12 +71,15 @@ class EmailsValidator extends AbstractValidator
      *
      * @param mixed $value
      * @param array $config
-     * @return string|void
-     * @throws ValidateException
+     * @return string
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
-        $value = self::parse($value);
-        return empty($value) ? '' : implode(', ', $value);
+        try {
+            $value = self::parse($value);
+            return empty($value) ? '' : implode(', ', $value);
+        } catch (Throwable $ex) {
+            return (string)$value;
+        }
     }
 }

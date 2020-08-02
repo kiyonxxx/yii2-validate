@@ -1,14 +1,15 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 09.07.20 14:18:35
+ * @version 02.08.20 20:47:49
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use Throwable;
 use function gettype;
 use function is_scalar;
 
@@ -29,7 +30,7 @@ class ZipValidator extends AbstractValidator
      * @return int|null
      * @throws ValidateException
      */
-    public static function parse($value, array $config = [])
+    public static function parse($value, array $config = []) : ?int
     {
         $digits = (int)($config['digits'] ?? 6);
 
@@ -56,16 +57,19 @@ class ZipValidator extends AbstractValidator
      * @param array $config
      * - digits - кол-во цифр
      * @return string
-     * @throws ValidateException
      */
-    public static function format($value, array $config = [])
+    public static function format($value, array $config = []) : string
     {
         $digits = (int)($config['digits'] ?? 6);
 
-        $value = self::parse($value, [
-            'digits' => $digits
-        ]);
+        try {
+            $value = self::parse($value, [
+                'digits' => $digits
+            ]);
 
-        return empty($value) ? '' : sprintf('%0' . $digits . 'd', $value);
+            return empty($value) ? '' : sprintf('%0' . $digits . 'd', $value);
+        } catch (Throwable $ex) {
+            return '';
+        }
     }
 }
