@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:44:58
+ * @version 12.08.20 16:27:33
  */
 
 declare(strict_types = 1);
@@ -11,6 +11,7 @@ namespace dicr\validate;
 
 use RuntimeException;
 use Throwable;
+
 use function gettype;
 use function is_scalar;
 use function preg_match;
@@ -18,6 +19,7 @@ use function preg_replace;
 use function sprintf;
 use function str_pad;
 use function strlen;
+
 use const STR_PAD_LEFT;
 
 /**
@@ -36,7 +38,7 @@ class PhoneValidator extends AbstractValidator
      *
      * @param $value
      * @param array $config
-     * @return int|null цифры номера телефона
+     * @return ?int цифры номера телефона
      * @throws ValidateException
      */
     public static function parse($value, array $config = []) : ?int
@@ -85,7 +87,7 @@ class PhoneValidator extends AbstractValidator
      * @param array $config
      * - int $country код страны
      * - int $region код региона по-умолчанию
-     * @return string|void
+     * @return string
      */
     public static function format($value, array $config = []) : string
     {
@@ -128,18 +130,18 @@ class PhoneValidator extends AbstractValidator
         }
 
         // строим строку
-        $s = $components['p'];
+        $str = $components['p'];
 
         // добавляем регион
         if (! empty($components['r'])) {
-            $s = '(' . sprintf('%03d', $components['r']) . ') ' . $s;
+            $str = '(' . sprintf('%03d', $components['r']) . ') ' . $str;
 
             // добавляем страну
             if (! empty($components['c'])) {
-                $s = '+' . $components['c'] . ' ' . $s;
+                $str = '+' . $components['c'] . ' ' . $str;
             }
         }
 
-        return $s;
+        return $str;
     }
 }

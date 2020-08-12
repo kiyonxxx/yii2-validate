@@ -3,6 +3,8 @@
     "type": "yii2-extension",
     "license": "MIT",
     "description": "Validation components for Yii2",
+    "homepage": "https://gitlab.com/dicr/yii2-validate",
+    "keywords": ["php", "yii2", "validate"],
     "authors": [
         {
             "name": "Igor Tarasov",
@@ -11,11 +13,9 @@
             "role": "developer"
         }
     ],
-    "homepage": "https://gitlab.com/dicr/yii2-validate",
     "support": {
         "source": "https://gitlab.com/dicr/yii2-validate.git"
     },
-    "keywords": ["php", "yii2", "validate"],
     "autoload": {
         "psr-4": {
             "dicr\\validate\\": "src/"
@@ -29,12 +29,11 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": "~7.2",
+        "php": "~7.4",
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "~9.2"
+        "phpunit/phpunit": "~9.3"
     },
     "repositories": [
         {"type": "composer", "url": "https://asset-packagist.org"}
