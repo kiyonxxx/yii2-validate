@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:50:14
+ * @version 14.08.20 10:47:04
  */
 
 declare(strict_types = 1);
@@ -12,7 +12,9 @@ namespace dicr\validate;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
+
 use function get_class;
+use function gettype;
 use function implode;
 use function is_array;
 use function is_scalar;
@@ -68,7 +70,7 @@ class ValidateException extends Exception
             foreach ($model->firstErrors as $attribute => $error) {
                 $value = $model->{$attribute};
                 $errors[] = $attribute . ': ' . $error . ': ' .
-                    (is_scalar($value) ? $value : get_class($value));
+                    (is_scalar($value) ? $value : gettype($value));
             }
 
             $message .= ': ' . implode('; ', $errors);

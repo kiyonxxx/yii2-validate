@@ -2,9 +2,9 @@
     "name": "dicr/yii2-validate",
     "type": "yii2-extension",
     "license": "MIT",
-    "description": "Validation components for Yii2",
     "homepage": "https://gitlab.com/dicr/yii2-validate",
-    "keywords": ["php", "yii2", "validate"],
+    "description": "Компоненты валидации for Yii2",
+    "keywords": ["dicr", "yii2", "validate"],
     "authors": [
         {
             "name": "Igor Tarasov",
@@ -29,7 +29,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": "~7.4",
+        "php": "~7.2",
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
