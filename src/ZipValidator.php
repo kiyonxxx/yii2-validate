@@ -3,14 +3,16 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:51:28
+ * @version 01.09.20 22:28:43
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
+use yii\base\InvalidConfigException;
+
 use function gettype;
+use function is_numeric;
 use function is_scalar;
 
 /**
@@ -22,18 +24,28 @@ class ZipValidator extends AbstractValidator
     public $digits = 6;
 
     /**
-     * Парсит значение индекса.
+     * @inheritDoc
+     * @throws InvalidConfigException
+     */
+    public function init()
+    {
+        parent::init();
+
+        if (! is_numeric($this->digits) || $this->digits < 1) {
+            throw new InvalidConfigException($this->digits);
+        }
+
+        $this->digits = (int)$this->digits;
+    }
+
+    /**
+     * @inheritDoc
      *
      * @param int|string|null $value
-     * @param array $config
-     * - digits - кол-во цифр
      * @return int|null
-     * @throws ValidateException
      */
-    public static function parse($value, array $config = []) : ?int
+    public function parseValue($value) : ?int
     {
-        $digits = (int)($config['digits'] ?? 6);
-
         if (empty($value)) {
             return null;
         }
@@ -42,34 +54,24 @@ class ZipValidator extends AbstractValidator
             throw new ValidateException('Некорректный тип индекса: ' . gettype($value));
         }
 
-        if (! preg_match('~^\d{1,' . $digits . '}$~u', (string)$value)) {
+        if (! preg_match('~^\d{1,' . $this->digits . '}$~u', (string)$value)) {
             throw new ValidateException('Некорректное значение индекса: ' . $value);
         }
 
         $value = (int)$value;
+
         return $value ?: null;
     }
 
     /**
-     * Форматирует значение индекса.
+     * @inheritDoc
      *
      * @param int|string|null $value индекс
-     * @param array $config
-     * - digits - кол-во цифр
-     * @return string
      */
-    public static function format($value, array $config = []) : string
+    public function formatValue($value) : string
     {
-        $digits = (int)($config['digits'] ?? 6);
+        $value = $this->parseValue($value);
 
-        try {
-            $value = self::parse($value, [
-                'digits' => $digits
-            ]);
-
-            return empty($value) ? '' : sprintf('%0' . $digits . 'd', $value);
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
+        return empty($value) ? '' : sprintf('%0' . $this->digits . 'd', $value);
     }
 }

@@ -3,15 +3,11 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:52:43
+ * @version 01.09.20 22:35:23
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
-
-use Throwable;
-use function ctype_digit;
-use function is_scalar;
 
 /**
  * Валидация ID
@@ -20,45 +16,24 @@ use function is_scalar;
 class IdValidator extends AbstractValidator
 {
     /**
-     * Фильтрует ID
+     * @inheritDoc
      *
-     * @param mixed $value
-     * @param array $config
-     * @return int|null
-     * @throws ValidateException
+     * @param string|int|null $value
+     * @return ?int
      */
-    public static function parse($value, array $config = []) : ?int
+    public function parseValue($value) : ?int
     {
+        $value = (string)$value;
         if (empty($value)) {
             return null;
         }
 
-        if (! is_scalar($value)) {
-            throw new ValidateException('Некорректный тип значения id:');
-        }
-
-        if (! ctype_digit((string)$value)) {
+        if (! preg_match('~^\d+$~', $value)) {
             throw new ValidateException('Некорректный формат id: ' . $value);
         }
 
         $value = (int)$value;
-        return empty($value) ? null : $value;
-    }
 
-    /**
-     * Конвертирует в строку.
-     *
-     * @param int|string|null $value
-     * @param array $config
-     * @return string
-     */
-    public static function format($value, array $config = []) : string
-    {
-        try {
-            $value = self::parse($value);
-            return empty($value) ? '' : (string)$value;
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
+        return empty($value) ? null : $value;
     }
 }

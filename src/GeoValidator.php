@@ -3,19 +3,19 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:52:11
+ * @version 01.09.20 22:31:14
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use function count;
 use function implode;
 use function is_array;
 use function is_numeric;
-use function is_string;
+use function is_scalar;
 use function preg_split;
+
 use const PREG_SPLIT_NO_EMPTY;
 
 /**
@@ -24,28 +24,21 @@ use const PREG_SPLIT_NO_EMPTY;
 class GeoValidator extends AbstractValidator
 {
     /**
-     * Парсит координаты в формате через запятую
+     * @inheritDoc
      *
      * @param string|float[]|null $val
-     * @param array $config
-     * @return float[]|null список email
-     * @throws ValidateException
+     * @return float[]|null координаты
      */
-    public static function parse($val, array $config = []) : ?array
+    public function parseValue($val) : ?array
     {
+        // значение строкой
+        if (is_scalar($val)) {
+            $val = (array)preg_split('~[\s\,]+~u', (string)$val, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         // пустые значения
         if (empty($val)) {
             return null;
-        }
-
-        // значение строкой
-        if (is_string($val)) {
-            $val = trim($val);
-            if ($val === '') {
-                return null;
-            }
-
-            $val = (array)preg_split('~[\s\,]+~u', $val, - 1, PREG_SPLIT_NO_EMPTY);
         }
 
         // проверяем тип и размер массива
@@ -69,20 +62,14 @@ class GeoValidator extends AbstractValidator
     }
 
     /**
-     * Форматирует значение гео-координат в строку через запятую.
-     *
+     * @inheritDoc
      * @param string|float[]|null $value
-     * @param array $config
-     * @return string
      */
-    public static function format($value, array $config = []) : string
+    public function formatValue($value) : string
     {
-        try {
-            // парсим в массив
-            $value = self::parse($value);
-            return empty($value) ? '' : implode(', ', $value);
-        } catch (Throwable $ex) {
-            return is_array($value) ? implode(',', $value) : (string)$value;
-        }
+        // парсим в массив
+        $value = $this->parseValue($value);
+
+        return empty($value) ? '' : implode(', ', $value);
     }
 }

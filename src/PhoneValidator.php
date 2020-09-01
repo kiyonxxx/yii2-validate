@@ -3,17 +3,15 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 12.08.20 16:27:33
+ * @version 01.09.20 22:37:24
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
 use RuntimeException;
-use Throwable;
+use yii\base\InvalidConfigException;
 
-use function gettype;
-use function is_scalar;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
@@ -34,24 +32,46 @@ class PhoneValidator extends AbstractValidator
     public $region;
 
     /**
-     * Парсит номер телефона
-     *
-     * @param $value
-     * @param array $config
-     * @return ?int цифры номера телефона
-     * @throws ValidateException
+     * @inheritDoc
+     * @throws InvalidConfigException
      */
-    public static function parse($value, array $config = []) : ?int
+    public function init()
     {
+        parent::init();
+
+        if (empty($this->country)) {
+            $this->country = null;
+        } else {
+            if (! preg_match('~^\d{1,2}$~', (string)$this->country)) {
+                throw new InvalidConfigException('country: ' . $this->country);
+            }
+
+            $this->country = (int)$this->country;
+        }
+
+        if (empty($this->region)) {
+            $this->region = null;
+        } else {
+            if (! preg_match('~^\d{1,3}$~', (string)$this->region)) {
+                throw new InvalidConfigException('region: ' . $this->region);
+            }
+
+            $this->region = (int)$this->region;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param string|int|null $value
+     * @return ?int цифры номера телефона или null если пустое
+     */
+    public function parseValue($value) : ?int
+    {
+        $value = (string)$value;
         if (empty($value)) {
             return null;
         }
-
-        if (! is_scalar($value)) {
-            throw new ValidateException('Некорректный тип значения: ' . gettype($value));
-        }
-
-        $value = (string)$value;
 
         // ищем недопустимый символ
         $matches = null;
@@ -60,7 +80,7 @@ class PhoneValidator extends AbstractValidator
         }
 
         // очищаем лишние символы (нельзя в int, чтобы не потерять начальные нули)
-        $phone = preg_replace('~[\D]+~um', '', $value);
+        $phone = preg_replace('~\D+~um', '', $value);
 
         // пустой телефон
         if ($phone === '' || $phone === '0') {
@@ -81,25 +101,21 @@ class PhoneValidator extends AbstractValidator
     }
 
     /**
-     * Форматирование телефона в строку.
-     *
-     * @param string|int|null $value
-     * @param array $config
-     * - int $country код страны
-     * - int $region код региона по-умолчанию
-     * @return string
+     * @inheritDoc
+     * @return ?int цифры телефона или null если пустой
      */
-    public static function format($value, array $config = []) : string
+    public static function parse($value, array $config = []) : ?int
     {
-        $country = (int)($config['country'] ?? 0);
-        $region = (int)($config['region'] ?? 0);
+        return parent::parse($value, $config);
+    }
 
-        try {
-            $value = self::parse($value);
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
-
+    /**
+     * @inheritDoc
+     * @param string|int|null $value
+     */
+    public function formatValue($value) : string
+    {
+        $value = $this->parseValue($value);
         if (empty($value)) {
             return '';
         }
@@ -119,14 +135,14 @@ class PhoneValidator extends AbstractValidator
             'p' => sprintf('%s-%s-%s', $matches[3], $matches[4], $matches[5])
         ];
 
-        // добавляем регион по-умолчанию
+        // добавляем страну по-умолчанию
         if (empty($components['c'])) {
-            $components['c'] = $country;
+            $components['c'] = $this->country;
         }
 
-        // добавляем страну по-умолчанию
+        // добавляем регион по-умолчанию
         if (empty($components['r'])) {
-            $components['r'] = $region;
+            $components['r'] = $this->region;
         }
 
         // строим строку

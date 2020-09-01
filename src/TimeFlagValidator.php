@@ -3,13 +3,12 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:53:05
+ * @version 01.09.20 22:41:27
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use function gettype;
 use function in_array;
 use function is_bool;
@@ -33,23 +32,18 @@ class TimeFlagValidator extends AbstractValidator
     public $format = 'Y-m-d H:i:s';
 
     /**
-     * Парсит значение флага даты
+     * {@inheritDoc}
      *
-     * @param mixed $value
+     * @param bool|int|string|null $value
      * - false, 0, 'false', 'no', 'off' - null
      * - true, 1, 'true', 'yes', 'on' - current date
      * - int - unix timestamp
      * - string - date string
      *
-     * @param array $config
-     * - format - формат даты и времени (по-умолчанию Y-m-d H:i:s)
-     * @return string|null значение в виде даты
-     * @throws ValidateException
+     * @return ?string значение в виде даты
      */
-    public static function parse($value, array $config = []) : ?string
+    public function parseValue($value) : ?string
     {
-        $format = $config['format'] ?? 'Y-m-d H:i:s';
-
         // empty
         if (empty($value)) {
             return null;
@@ -61,7 +55,7 @@ class TimeFlagValidator extends AbstractValidator
 
         // boolean
         if (is_bool($value)) {
-            return $value ? date($format) : null;
+            return $value ? date($this->format) : null;
         }
 
         // конвертируем в строку
@@ -76,7 +70,7 @@ class TimeFlagValidator extends AbstractValidator
         }
 
         if (in_array($value, ['1', 'yes', 'true', 'on'], true)) {
-            return date($format);
+            return date($this->format);
         }
 
         // numeric
@@ -92,11 +86,11 @@ class TimeFlagValidator extends AbstractValidator
             }
 
             if ($value === 1) {
-                return date($format);
+                return date($this->format);
             }
 
             // как timestamp
-            return date($format, $value);
+            return date($this->format, $value);
         }
 
         // строковая дата
@@ -105,25 +99,18 @@ class TimeFlagValidator extends AbstractValidator
             throw new ValidateException('Некорректный форматы флага/даты');
         }
 
-        return date($format, $value);
+        return date($this->format, $value);
     }
 
     /**
-     * Форматирует в строку.
+     * @inheritDoc
      *
      * @param int|string|null $value
-     * @param array $config
-     * @return string
      */
-    public static function format($value, array $config = []) : string
+    public function formatValue($value) : string
     {
-        $format = $config['format'] ?? 'Y-m-d H:i:s';
+        $value = $this->parseValue($value);
 
-        try {
-            $value = self::parse($value);
-            return empty($value) ? '' : date($format, strtotime($value));
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
+        return empty($value) ? '' : date($this->format, strtotime($value));
     }
 }

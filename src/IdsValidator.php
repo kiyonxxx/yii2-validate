@@ -3,24 +3,20 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 21:52:32
+ * @version 01.09.20 22:32:13
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
-use function array_filter;
-use function array_map;
 use function array_unique;
-use function array_values;
 use function gettype;
 use function implode;
 use function is_array;
 use function is_scalar;
 use function preg_split;
 use function sort;
-use function trim;
+
 use const PREG_SPLIT_NO_EMPTY;
 
 /**
@@ -29,22 +25,20 @@ use const PREG_SPLIT_NO_EMPTY;
 class IdsValidator extends AbstractValidator
 {
     /**
-     * Парсит массив id
+     * @inheritDoc
      *
      * @param int[]|string|null $value
-     * @param array $config
      * @return int[]|null если пустой то null
-     * @throws ValidateException
      */
-    public static function parse($value, array $config = []) : ?array
+    public function parseValue($value) : ?array
     {
-        if (empty($value)) {
-            return null;
-        }
-
         // строка через пробелы или запятые
         if (is_scalar($value)) {
-            $value = (array)preg_split('~[\s\,]+~u', trim((string)$value));
+            $value = (array)preg_split('~[\s,;]+~u', (string)$value, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        if (empty($value)) {
+            return null;
         }
 
         // проверяем массив
@@ -52,78 +46,71 @@ class IdsValidator extends AbstractValidator
             throw new ValidateException('Некорректный тип значения: ' . gettype($value));
         }
 
-        // обходим значения
-        $value = array_map(static function($id) {
-            $id = IdValidator::parse($id);
+        $idValidator = new IdValidator();
 
-            if (empty($id)) {
+        foreach ($value as $i => &$val) {
+            $val = $idValidator->parseValue($val);
+
+            if (empty($val)) {
                 throw new ValidateException('Пустое значение id');
             }
+        }
 
-            return $id;
-        }, array_values($value));
+        unset($val);
 
         sort($value);
-        return $value ? array_unique($value) : null;
+
+        return empty($value) ? null : array_unique($value);
     }
 
     /**
-     * Фильтрует массив id, удаляя некорректные значения.
+     * @inheritDoc
      *
      * @param int[]|string|null $value
-     * @param array $config
-     * @return int[] массив id или null
+     * @return int[] массив id
      */
-    public static function filter($value, array $config = []) : ?array
+    public function filterValue($value) : array
     {
-        if (empty($value)) {
-            return [];
-        }
-
         // строка через пробелы или запятые
         if (is_scalar($value)) {
-            $value = (array)preg_split('~[\s\,]+~u', trim((string)$value), - 1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split('~[\s,;]+~u', (string)$value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         // проверяем массив
-        if (! is_array($value)) {
+        if (empty($value) || ! is_array($value)) {
             return [];
         }
 
-        // обходим значения
-        $value = array_map(static function($id) {
+        $idValidator = new IdValidator();
+
+        foreach ($value as $i => &$val) {
             try {
-                $id = IdValidator::parse($id);
-            } /** @noinspection BadExceptionsProcessingInspection */
-            catch (ValidateException $ex) {
-                $id = 0;
+                $val = $idValidator->parseValue($val);
+            } catch (ValidateException $ex) {
+                $val = null;
             }
 
-            return $id;
-        }, array_values($value));
+            if (empty($val) || $val < 0) {
+                unset($value[$i]);
+            }
+        }
 
-        // фильтруем пустые значения
-        $value = array_filter($value, static function($id) {
-            return $id > 0;
-        });
+        unset($val);
 
         sort($value);
+
         return array_unique($value);
     }
 
     /**
-     * Конвертирует в строку.
+     * @inheritDoc
      *
-     * @param int[]|string $value
-     * @param array $config
-     * @return string
+     * @param int[]|string|null $value
      */
-    public static function format($value, array $config = []) : string
+    public function formatValue($value) : string
     {
-        try {
-            return implode(', ', self::parse($value));
-        } catch (Throwable $ex) {
-            return is_array($value) ? implode(',', $value) : (string)$value;
-        }
+        $value = $this->parseValue($value);
+
+        return empty($value) ? '' : implode(',', $value);
     }
 }

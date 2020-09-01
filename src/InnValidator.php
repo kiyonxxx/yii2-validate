@@ -3,13 +3,12 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:48:39
+ * @version 01.09.20 22:35:42
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use function gettype;
 use function is_scalar;
 
@@ -21,14 +20,12 @@ use function is_scalar;
 class InnValidator extends AbstractValidator
 {
     /**
-     * Парсит значение ИНН
+     * @inheritDoc
      *
      * @param string|int|null $value
-     * @param array $config
      * @return int|null
-     * @throws ValidateException некорректное значение
      */
-    public static function parse($value, array $config = []) : ?int
+    public function parseValue($value) : ?int
     {
         if (empty($value)) {
             return null;
@@ -66,22 +63,5 @@ class InnValidator extends AbstractValidator
         }
 
         return (int)$value;
-    }
-
-    /**
-     * Форматирование значения в строку.
-     *
-     * @param string|int|null $value
-     * @param array $config
-     * @return string
-     */
-    public static function format($value, array $config = []) : string
-    {
-        try {
-            $value = (string)self::parse($value);
-            return empty($value) ? '' : (string)$value;
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
     }
 }

@@ -3,13 +3,12 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 02.08.20 20:41:14
+ * @version 01.09.20 22:40:13
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use Throwable;
 use function date;
 use function gettype;
 use function is_numeric;
@@ -25,6 +24,9 @@ class DateTimeValidator extends AbstractValidator
     /** @var string default date time format */
     public const FORMAT_DEFAULT = 'Y-m-d H:i:s';
 
+    /** @var string формат даты/времени */
+    public $format = self::FORMAT_DEFAULT;
+
     /**
      * Конвертирует дату/время в число.
      *
@@ -32,7 +34,7 @@ class DateTimeValidator extends AbstractValidator
      * @return int
      * @throws ValidateException
      */
-    private static function timestamp($value) : int
+    public static function timestamp($value) : int
     {
         // пустые значения
         if (empty($value)) {
@@ -65,40 +67,29 @@ class DateTimeValidator extends AbstractValidator
     }
 
     /**
-     * Парсит значение даты/времени из строки.
+     * @inheritDoc
      *
-     * @param string $value
-     * @param array $config
-     * @return string|null
-     * @throws ValidateException
+     * @param string|int|null
+     * @return ?string
      */
-    public static function parse($value, array $config = []) : ?string
+    public function parseValue($value) : ?string
     {
         // парсим в число
         $time = self::timestamp($value);
 
         // форматируем в datetime
-        return empty($time) ? null : date('Y-m-d H:i:s', $time);
+        return empty($time) ? null : date($this->format, $time);
     }
 
     /**
-     * Форматирует значение в строку.
-     *
-     * @param string|int $value
-     * @param array $config
-     * - string $format php-формат date
-     * @return string
+     * @inheritDoc
+     * @param string|int|null
      */
-    public static function format($value, array $config = []) : string
+    public function formatValue($value) : string
     {
-        $format = $config['format'] ?? self::FORMAT_DEFAULT;
-
         // парсим значение в datetime
-        try {
-            $time = self::timestamp($value);
-            return empty($time) ? '' : date($format, $value);
-        } catch (Throwable $ex) {
-            return (string)$value;
-        }
+        $time = self::timestamp($value);
+
+        return empty($time) ? '' : date($this->format, $value);
     }
 }

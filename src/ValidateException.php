@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 14.08.20 10:47:04
+ * @version 01.09.20 22:25:14
  */
 
 declare(strict_types = 1);
@@ -26,7 +26,7 @@ use function reset;
  */
 class ValidateException extends Exception
 {
-    /** @var Model|null */
+    /** @var ?Model */
     protected $model;
 
     /**
@@ -36,10 +36,6 @@ class ValidateException extends Exception
      */
     public function __construct($value)
     {
-        if (empty($value)) {
-            throw new InvalidArgumentException('value');
-        }
-
         if (is_string($value)) {
             $message = $value;
         } elseif (is_array($value)) {
@@ -108,7 +104,7 @@ class ValidateException extends Exception
     /**
      * Возвращает модель.
      *
-     * @return Model|null
+     * @return ?Model
      */
     public function getModel() : ?Model
     {
