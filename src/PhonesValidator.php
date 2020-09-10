@@ -3,12 +3,13 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 10.09.20 23:53:28
+ * @version 11.09.20 00:05:39
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
+use function array_map;
 use function implode;
 use function is_string;
 use function preg_split;
@@ -96,9 +97,13 @@ class PhonesValidator extends AbstractValidator
      */
     public function formatValue($value) : string
     {
-        $value = $this->parseValue($value);
+        $validator = $this->phoneValidator();
 
-        return $value === null ? '' : implode(', ', $value);
+        $phones = array_map(static function ($value) use ($validator) {
+            return $validator->formatValue($value);
+        }, $this->parseValue($value) ?: []);
+
+        return implode(', ', $phones);
     }
 
     /**
@@ -108,9 +113,13 @@ class PhonesValidator extends AbstractValidator
      */
     public function formatValueSilent($value, string $error = '') : string
     {
-        $value = $this->filterValue($value);
+        $validator = $this->phoneValidator();
 
-        return $value === null ? '' : implode(', ', $value);
+        $phones = array_map(static function ($value) use ($validator) {
+            return $validator->formatValueSilent($value);
+        }, $this->filterValue($value) ?: []);
+
+        return implode(', ', $phones);
     }
 
     /** @var PhoneValidator */
