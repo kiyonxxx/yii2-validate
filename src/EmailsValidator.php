@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:30:00
+ * @version 10.09.20 23:37:48
  */
 
 declare(strict_types = 1);
@@ -11,10 +11,8 @@ namespace dicr\validate;
 
 use yii\validators\EmailValidator;
 
-use function array_filter;
 use function implode;
-use function is_array;
-use function is_scalar;
+use function is_string;
 use function preg_split;
 
 use const PREG_SPLIT_NO_EMPTY;
@@ -32,31 +30,27 @@ class EmailsValidator extends AbstractValidator
      */
     public function parseValue($value) : ?array
     {
-        if (is_scalar($value)) {
-            $value = (array)preg_split('~[,;\s]+~u', (string)$value, -1, PREG_SPLIT_NO_EMPTY);
-        }
-
-        if (empty($value)) {
+        if ($value === null || $value === '' || $value === 0 || $value === '0' || $value === []) {
             return null;
         }
 
-        if (! is_array($value)) {
-            throw new ValidateException('Некорректный тип значения');
+        if (is_string($value)) {
+            $value = (array)preg_split('~[,;\s]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
-        $emailValidator = new EmailValidator([
-            'checkDNS' => true,
-            'enableIDN' => true
-        ]);
+        $ret = [];
+        $emailValidator = $this->emailValidator();
 
-        foreach ($value as $i => $email) {
+        foreach ((array)$value as $val) {
             $error = null;
-            if (! $emailValidator->validate($email, $error)) {
+            if ($emailValidator->validate($val, $error)) {
+                $ret[] = $val;
+            } else {
                 throw new ValidateException($error);
             }
         }
 
-        return $value;
+        return $ret ?: null;
     }
 
     /**
@@ -67,22 +61,24 @@ class EmailsValidator extends AbstractValidator
      */
     public function filterValue($value) : array
     {
-        if (is_scalar($value)) {
-            $value = preg_split('~[,;\s]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
-        }
-
-        if (empty($value) || ! is_array($value)) {
+        if ($value === null || $value === '' || $value === 0 || $value === '0' || $value === []) {
             return [];
         }
 
-        return array_filter($value, static function ($val) {
-            $emailValidator = new EmailValidator([
-                'checkDNS' => true,
-                'enableIDN' => true
-            ]);
+        if (is_string($value)) {
+            $value = (array)preg_split('~[,;\s]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
+        }
 
-            return $emailValidator->validate($val);
-        });
+        $ret = [];
+        $emailValidator = $this->emailValidator();
+
+        foreach ((array)$value as $val) {
+            if ($emailValidator->validate($val, $error)) {
+                $ret[] = $val;
+            }
+        }
+
+        return $ret;
     }
 
     /**
@@ -95,5 +91,25 @@ class EmailsValidator extends AbstractValidator
         $value = $this->parseValue($value);
 
         return empty($value) ? '' : implode(', ', $value);
+    }
+
+    /** @var EmailValidator */
+    private $_emailValidator;
+
+    /**
+     * Валидатор E-mail
+     */
+    private function emailValidator() : EmailValidator
+    {
+        if (! isset($this->_emailValidator)) {
+            $this->_emailValidator = new EmailValidator([
+                'formatOnValidate' => $this->formatOnValidate,
+                'skipOnEmpty' => true,
+                'checkDNS' => true,
+                'enableIDN' => true
+            ]);
+        }
+
+        return $this->_emailValidator;
     }
 }
