@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:37:24
+ * @version 10.09.20 23:51:47
  */
 
 declare(strict_types = 1);
@@ -116,7 +116,7 @@ class PhoneValidator extends AbstractValidator
     public function formatValue($value) : string
     {
         $value = $this->parseValue($value);
-        if (empty($value)) {
+        if ($value === null) {
             return '';
         }
 

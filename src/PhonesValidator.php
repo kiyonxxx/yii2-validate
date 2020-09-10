@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 10.09.20 23:40:00
+ * @version 10.09.20 23:53:28
  */
 
 declare(strict_types = 1);
@@ -20,6 +20,15 @@ use const PREG_SPLIT_NO_EMPTY;
  */
 class PhonesValidator extends AbstractValidator
 {
+    /** @var string разделитель телефонов */
+    public const SPLIT_REGEX = '~\s*[,;]\s*~u';
+
+    /** @var ?int */
+    public $country = 7;
+
+    /** @var ?int */
+    public $region;
+
     /**
      * @inheritDoc
      * @param string|array|null $value
@@ -32,7 +41,7 @@ class PhonesValidator extends AbstractValidator
         }
 
         if (is_string($value)) {
-            $value = (array)preg_split('~[\s,;]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split(self::SPLIT_REGEX, $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         $ret = [];
@@ -60,7 +69,7 @@ class PhonesValidator extends AbstractValidator
         }
 
         if (is_string($value)) {
-            $value = (array)preg_split('~[\s,;]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split(self::SPLIT_REGEX, $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         $ret = [];
@@ -117,7 +126,9 @@ class PhonesValidator extends AbstractValidator
         if (! isset($this->_phoneValidator)) {
             $this->_phoneValidator = new PhoneValidator([
                 'formatOnValidate' => $this->formatOnValidate,
-                'skipOnEmpty' => true
+                'skipOnEmpty' => true,
+                'country' => $this->country,
+                'region' => $this->region
             ]);
         }
 

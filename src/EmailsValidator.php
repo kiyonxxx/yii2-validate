@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 10.09.20 23:45:22
+ * @version 10.09.20 23:54:56
  */
 
 declare(strict_types = 1);
@@ -22,6 +22,15 @@ use const PREG_SPLIT_NO_EMPTY;
  */
 class EmailsValidator extends AbstractValidator
 {
+    /** @var string разделитель email */
+    public const SPLIT_REGEX = '~\s*[,;]\s*~u';
+
+    /** @var bool проверка домена в DNS */
+    public $checkDNS = true;
+
+    /** @var bool поддержка IDN */
+    public $enableIDN = true;
+
     /**
      * @inheritDoc
      *
@@ -35,7 +44,7 @@ class EmailsValidator extends AbstractValidator
         }
 
         if (is_string($value)) {
-            $value = (array)preg_split('~[,;\s]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split(self::SPLIT_REGEX, $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         $ret = [];
@@ -66,7 +75,7 @@ class EmailsValidator extends AbstractValidator
         }
 
         if (is_string($value)) {
-            $value = (array)preg_split('~[,;\s]+~u', $value, -1, PREG_SPLIT_NO_EMPTY);
+            $value = (array)preg_split(self::SPLIT_REGEX, $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         $ret = [];
@@ -104,8 +113,8 @@ class EmailsValidator extends AbstractValidator
         if (! isset($this->_emailValidator)) {
             $this->_emailValidator = new EmailValidator([
                 'skipOnEmpty' => true,
-                'checkDNS' => true,
-                'enableIDN' => true
+                'checkDNS' => $this->checkDNS,
+                'enableIDN' => $this->enableIDN
             ]);
         }
 
