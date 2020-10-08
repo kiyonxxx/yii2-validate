@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:28:43
+ * @version 08.10.20 06:38:41
  */
 
 declare(strict_types = 1);
@@ -27,7 +27,7 @@ class ZipValidator extends AbstractValidator
      * @inheritDoc
      * @throws InvalidConfigException
      */
-    public function init()
+    public function init() : void
     {
         parent::init();
 
@@ -72,6 +72,6 @@ class ZipValidator extends AbstractValidator
     {
         $value = $this->parseValue($value);
 
-        return empty($value) ? '' : sprintf('%0' . $this->digits . 'd', $value);
+        return $value === null ? '' : sprintf('%0' . $this->digits . 'd', $value);
     }
 }

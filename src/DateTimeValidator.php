@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:40:13
+ * @version 08.10.20 06:35:20
  */
 
 declare(strict_types = 1);
@@ -83,13 +83,13 @@ class DateTimeValidator extends AbstractValidator
 
     /**
      * @inheritDoc
-     * @param string|int|null
+     * @param string|int|null $value
      */
     public function formatValue($value) : string
     {
         // парсим значение в datetime
         $time = self::timestamp($value);
 
-        return empty($time) ? '' : date($this->format, $value);
+        return empty($time) ? '' : date($this->format, $time);
     }
 }

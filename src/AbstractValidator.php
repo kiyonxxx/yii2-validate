@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:34:12
+ * @version 08.10.20 06:36:58
  */
 
 declare(strict_types = 1);
@@ -24,7 +24,7 @@ abstract class AbstractValidator extends Validator
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init() : void
     {
         parent::init();
 

@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 10.09.20 23:51:47
+ * @version 08.10.20 06:37:22
  */
 
 declare(strict_types = 1);
@@ -35,7 +35,7 @@ class PhoneValidator extends AbstractValidator
      * @inheritDoc
      * @throws InvalidConfigException
      */
-    public function init()
+    public function init() : void
     {
         parent::init();
 

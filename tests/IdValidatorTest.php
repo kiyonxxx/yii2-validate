@@ -1,9 +1,9 @@
 <?php
-/**
+/*
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 04.07.20 12:59:57
+ * @version 08.10.20 06:37:22
  */
 
 /** @noinspection PhpMethodMayBeStaticInspection */
@@ -22,7 +22,7 @@ class IdValidatorTest extends TestCase
     /**
      * @throws ValidateException
      */
-    public function testEmpty()
+    public function testEmpty() : void
     {
         self::assertNull(IdValidator::parse(null));
         self::assertSame('', IdValidator::format(null));
@@ -37,7 +37,7 @@ class IdValidatorTest extends TestCase
     /**
      * @throws ValidateException
      */
-    public function testId()
+    public function testId() : void
     {
         self::assertSame(1234, IdValidator::parse(1234));
         self::assertSame('1234', IdValidator::format(1234));

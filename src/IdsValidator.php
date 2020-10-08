@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 01.09.20 22:32:13
+ * @version 08.10.20 06:38:41
  */
 
 declare(strict_types = 1);
@@ -51,7 +51,7 @@ class IdsValidator extends AbstractValidator
         foreach ($value as $i => &$val) {
             $val = $idValidator->parseValue($val);
 
-            if (empty($val)) {
+            if ($val === null) {
                 throw new ValidateException('Пустое значение id');
             }
         }
@@ -90,7 +90,7 @@ class IdsValidator extends AbstractValidator
                 $val = null;
             }
 
-            if (empty($val) || $val < 0) {
+            if ($val === null || $val < 0) {
                 unset($value[$i]);
             }
         }

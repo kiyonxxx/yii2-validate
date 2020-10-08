@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 11.09.20 00:05:39
+ * @version 08.10.20 06:39:02
  */
 
 declare(strict_types = 1);
@@ -99,7 +99,7 @@ class PhonesValidator extends AbstractValidator
     {
         $validator = $this->phoneValidator();
 
-        $phones = array_map(static function ($value) use ($validator) {
+        $phones = array_map(static function ($value) use ($validator) : string {
             return $validator->formatValue($value);
         }, $this->parseValue($value) ?: []);
 
@@ -115,7 +115,7 @@ class PhonesValidator extends AbstractValidator
     {
         $validator = $this->phoneValidator();
 
-        $phones = array_map(static function ($value) use ($validator) {
+        $phones = array_map(static function ($value) use ($validator) : string {
             return $validator->formatValueSilent($value);
         }, $this->filterValue($value) ?: []);
 
