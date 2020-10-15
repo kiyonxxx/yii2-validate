@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.10.20 06:36:58
+ * @version 15.10.20 14:39:46
  */
 
 declare(strict_types = 1);
@@ -93,9 +93,7 @@ abstract class AbstractValidator extends Validator
      */
     public function formatValue($value) : string
     {
-        $value = $this->parseValue($value);
-
-        return empty($value) ? '' : (string)$value;
+        return (string)$this->parseValue($value);
     }
 
     /**
