@@ -3,13 +3,13 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 16.10.20 12:47:55
+ * @version 30.10.20 21:18:49
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
-use dicr\helper\JsonEntity;
+use dicr\json\JsonEntity;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 
@@ -114,7 +114,7 @@ class EntityValidator extends AbstractValidator
         if ($this->class === null) {
             // пытаемся получить класс из описания JsonEntity
             if ($model instanceof JsonEntity) {
-                $this->class = $model->attributeEntities()[$attribute] ?? null;
+                $this->class = $model::attributeEntities()[$attribute] ?? null;
             }
 
             // без класса работать нельзя

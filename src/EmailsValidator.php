@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 10.09.20 23:54:56
+ * @version 30.10.20 21:18:13
  */
 
 declare(strict_types = 1);
@@ -107,6 +107,8 @@ class EmailsValidator extends AbstractValidator
 
     /**
      * Валидатор E-mail
+     *
+     * @return EmailValidator
      */
     private function emailValidator() : EmailValidator
     {

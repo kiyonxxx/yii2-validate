@@ -29,14 +29,15 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": "~7.2",
+        "php": "~7.3",
         "yiisoft/yii2": "~2.0",
-        "dicr/yii2-helper": "~3.7"
+        "dicr/yii2-json": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.4"
     },
     "repositories": [
+        {"type": "gitlab", "url": "https://gitlab.com/dicr/yii2-json.git"},
         {"type": "composer", "url": "https://asset-packagist.org"}
     ]
 }
