@@ -3,7 +3,7 @@
     "type": "yii2-extension",
     "license": "MIT",
     "homepage": "https://gitlab.com/dicr/yii2-validate",
-    "description": "Компоненты валидации for Yii2",
+    "description": "Компоненты парсинга и валидации данных для Yii2",
     "keywords": ["dicr", "yii2", "validate"],
     "authors": [
         {
@@ -36,7 +36,6 @@
         "phpunit/phpunit": "~9.4"
     },
     "repositories": [
-        {"type": "gitlab", "url": "https://gitlab.com/dicr/yii2-json.git"},
         {"type": "composer", "url": "https://asset-packagist.org"}
     ]
 }
