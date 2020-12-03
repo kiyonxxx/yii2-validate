@@ -3,7 +3,7 @@
  * @copyright 2019-2020 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 03.12.20 20:07:50
+ * @version 03.12.20 20:17:52
  */
 
 declare(strict_types = 1);
@@ -13,14 +13,20 @@ use function array_filter;
 use function array_unique;
 use function is_array;
 use function is_scalar;
+use function preg_split;
+
+use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * Валидатор массива строк string[] с форматированием в "string,string,string"
  */
 class StringsValidator extends AbstractValidator
 {
-    /** @var string разделитель строк при форматировании и парсинге */
-    public $separator = ', ';
+    /** @var string разделитель для парсинга строки */
+    public $separator = '~[\s\,]+~u';
+
+    /** @var string разделитель для форматирования в строку */
+    public $glue = ', ';
 
     /**
      * @inheritDoc
@@ -35,7 +41,7 @@ class StringsValidator extends AbstractValidator
         }
 
         if (is_scalar($value)) {
-            $value = (array)explode($this->separator, $value);
+            $value = preg_split($this->separator, $value, -1, PREG_SPLIT_NO_EMPTY);
         }
 
         if (! is_array($value)) {
