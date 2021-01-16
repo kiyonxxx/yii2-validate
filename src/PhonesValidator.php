@@ -1,9 +1,9 @@
 <?php
 /*
- * @copyright 2019-2020 Dicr http://dicr.org
+ * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 08.10.20 06:39:02
+ * @version 16.01.21 06:30:38
  */
 
 declare(strict_types = 1);
@@ -35,7 +35,7 @@ class PhonesValidator extends AbstractValidator
      * @param string|array|null $value
      * @return int[]|string[]|null
      */
-    public function parseValue($value) : ?array
+    public function parseValue($value): ?array
     {
         if ($value === null || $value === '' || $value === []) {
             return null;
@@ -63,7 +63,7 @@ class PhonesValidator extends AbstractValidator
      * @param string|int[]|string[]|null $value
      * @return int[]|string[]
      */
-    public function filterValue($value) : array
+    public function filterValue($value): array
     {
         if ($value === null || $value === '' || $value === []) {
             return [];
@@ -95,13 +95,14 @@ class PhonesValidator extends AbstractValidator
      * @param string|int[]|string[]|null $value
      * @return string
      */
-    public function formatValue($value) : string
+    public function formatValue($value): string
     {
         $validator = $this->phoneValidator();
 
-        $phones = array_map(static function ($value) use ($validator) : string {
-            return $validator->formatValue($value);
-        }, $this->parseValue($value) ?: []);
+        $phones = array_map(
+            static fn($value): string => $validator->formatValue($value),
+            $this->parseValue($value) ?: []
+        );
 
         return implode(', ', $phones);
     }
@@ -111,13 +112,14 @@ class PhonesValidator extends AbstractValidator
      * @param string|int[]|string[]|null $value
      * @return string
      */
-    public function formatValueSilent($value, string $error = '') : string
+    public function formatValueSilent($value, string $error = ''): string
     {
         $validator = $this->phoneValidator();
 
-        $phones = array_map(static function ($value) use ($validator) : string {
-            return $validator->formatValueSilent($value);
-        }, $this->filterValue($value) ?: []);
+        $phones = array_map(
+            static fn($value): string => $validator->formatValueSilent($value),
+            $this->filterValue($value) ?: []
+        );
 
         return implode(', ', $phones);
     }
@@ -130,7 +132,7 @@ class PhonesValidator extends AbstractValidator
      *
      * @return PhoneValidator
      */
-    private function phoneValidator() : PhoneValidator
+    private function phoneValidator(): PhoneValidator
     {
         if (! isset($this->_phoneValidator)) {
             $this->_phoneValidator = new PhoneValidator([

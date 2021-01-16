@@ -1,9 +1,9 @@
 <?php
 /*
- * @copyright 2019-2020 Dicr http://dicr.org
+ * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 15.10.20 14:39:46
+ * @version 16.01.21 06:27:54
  */
 
 declare(strict_types = 1);
@@ -149,7 +149,7 @@ abstract class AbstractValidator extends Validator
 
             // проверяем пустое
             if ($val === null && ! $this->skipOnEmpty) {
-                return ['Требуется значение'];
+                return ['Требуется значение', []];
             }
         } catch (ValidateException $ex) {
             return [$ex->getMessage()];

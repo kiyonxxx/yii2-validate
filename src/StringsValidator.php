@@ -1,15 +1,16 @@
 <?php
 /*
- * @copyright 2019-2020 Dicr http://dicr.org
+ * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license proprietary
- * @version 03.12.20 20:17:52
+ * @version 16.01.21 06:31:44
  */
 
 declare(strict_types = 1);
 namespace dicr\validate;
 
 use function array_filter;
+use function array_map;
 use function array_unique;
 use function is_array;
 use function is_scalar;
@@ -34,7 +35,7 @@ class StringsValidator extends AbstractValidator
      * @return string[]|null
      * @throws ValidateException
      */
-    public function parseValue($value) : ?array
+    public function parseValue($value): ?array
     {
         if ($value === null || $value === '' || $value === []) {
             return null;
@@ -48,13 +49,10 @@ class StringsValidator extends AbstractValidator
             throw new ValidateException('значение должно быть массивом');
         }
 
-        $value = array_map(static function ($val) : string {
-            return (string)$val;
-        }, $value);
-
-        $value = array_filter($value, static function (string $val) : bool {
-            return $val !== '';
-        });
+        $value = array_filter(
+            array_map(static fn($val): string => (string)$val, $value),
+            static fn(string $val): bool => $val !== ''
+        );
 
         if (empty($value)) {
             return null;
@@ -71,7 +69,7 @@ class StringsValidator extends AbstractValidator
      * @return string
      * @throws ValidateException
      */
-    public function formatValue($value) : string
+    public function formatValue($value): string
     {
         $value = $this->parseValue($value);
 
