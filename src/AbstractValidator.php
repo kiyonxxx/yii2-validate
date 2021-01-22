@@ -2,8 +2,8 @@
 /*
  * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
- * @license proprietary
- * @version 16.01.21 06:27:54
+ * @license MIT
+ * @version 23.01.21 03:20:37
  */
 
 declare(strict_types = 1);
@@ -152,7 +152,7 @@ abstract class AbstractValidator extends Validator
                 return ['Требуется значение', []];
             }
         } catch (ValidateException $ex) {
-            return [$ex->getMessage()];
+            return [$ex->getMessage(), []];
         }
 
         return null;
