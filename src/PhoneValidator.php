@@ -1,9 +1,9 @@
 <?php
 /*
- * @copyright 2019-2020 Dicr http://dicr.org
+ * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
- * @license proprietary
- * @version 08.10.20 06:37:22
+ * @license MIT
+ * @version 03.04.21 00:24:59
  */
 
 declare(strict_types = 1);
@@ -35,7 +35,7 @@ class PhoneValidator extends AbstractValidator
      * @inheritDoc
      * @throws InvalidConfigException
      */
-    public function init() : void
+    public function init(): void
     {
         parent::init();
 
@@ -66,7 +66,7 @@ class PhoneValidator extends AbstractValidator
      * @param string|int|null $value
      * @return ?int цифры номера телефона или null если пустое
      */
-    public function parseValue($value) : ?int
+    public function parseValue($value): ?int
     {
         $value = (string)$value;
         if (empty($value)) {
@@ -75,7 +75,7 @@ class PhoneValidator extends AbstractValidator
 
         // ищем недопустимый символ
         $matches = null;
-        if (preg_match('~([^+\d\s+\-()])~um', $value, $matches)) {
+        if (preg_match('~([^\+\d\s\-\(\)])~um', $value, $matches)) {
             throw new ValidateException(sprintf('Недопустимый символ "%s" в номере телефона', $matches[1]));
         }
 
@@ -104,7 +104,7 @@ class PhoneValidator extends AbstractValidator
      * @inheritDoc
      * @return ?int цифры телефона или null если пустой
      */
-    public static function parse($value, array $config = []) : ?int
+    public static function parse($value, array $config = []): ?int
     {
         return parent::parse($value, $config);
     }
@@ -113,7 +113,7 @@ class PhoneValidator extends AbstractValidator
      * @inheritDoc
      * @param string|int|null $value
      */
-    public function formatValue($value) : string
+    public function formatValue($value): string
     {
         $value = $this->parseValue($value);
         if ($value === null) {

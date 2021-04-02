@@ -29,10 +29,11 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": "~7.4 || ~8.0",
+        "php": "~7.4 || ~8.0.1",
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "~9.5"
     },
     "repositories": [
