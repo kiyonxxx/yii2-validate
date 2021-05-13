@@ -1,10 +1,10 @@
 {
     "name": "dicr/yii2-validate",
     "type": "yii2-extension",
-    "license": "MIT",
-    "homepage": "https://gitlab.com/dicr/yii2-validate",
+    "license": "GPL-3.0-or-later",
     "description": "Компоненты парсинга и валидации данных для Yii2",
     "keywords": ["dicr", "yii2", "validate"],
+    "homepage": "https://gitlab.com/dicr/yii2-validate",
     "authors": [
         {
             "name": "Igor Tarasov",

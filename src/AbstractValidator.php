@@ -3,7 +3,7 @@
  * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license MIT
- * @version 23.01.21 03:20:37
+ * @version 14.05.21 04:20:20
  */
 
 declare(strict_types = 1);
@@ -20,16 +20,6 @@ abstract class AbstractValidator extends Validator
 {
     /** @var bool форматирует при валидации */
     public $formatOnValidate = false;
-
-    /**
-     * @inheritDoc
-     */
-    public function init() : void
-    {
-        parent::init();
-
-        $this->formatOnValidate = (bool)$this->formatOnValidate;
-    }
 
     /**
      * Парсит значение, приводя к типу.
