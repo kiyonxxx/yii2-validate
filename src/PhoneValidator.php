@@ -3,7 +3,7 @@
  * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license MIT
- * @version 14.05.21 04:19:56
+ * @version 17.05.21 11:51:56
  */
 
 declare(strict_types = 1);
@@ -41,13 +41,13 @@ class PhoneValidator extends AbstractValidator
 
         if (empty($this->country)) {
             $this->country = null;
-        } elseif (! preg_match('~^\d{1,2}$~', (string)$this->country)) {
+        } elseif (! preg_match('~^\d{1,3}$~', (string)$this->country)) {
             throw new InvalidConfigException('country: ' . $this->country);
         }
 
         if (empty($this->region)) {
             $this->region = null;
-        } elseif (! preg_match('~^\d{3}$~', (string)$this->region)) {
+        } elseif (! preg_match('~^\d{1,3}$~', (string)$this->region)) {
             throw new InvalidConfigException('region: ' . $this->region);
         }
     }

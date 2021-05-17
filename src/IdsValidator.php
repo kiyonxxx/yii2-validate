@@ -1,9 +1,9 @@
 <?php
 /*
- * @copyright 2019-2020 Dicr http://dicr.org
+ * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
- * @license proprietary
- * @version 08.10.20 06:38:41
+ * @license MIT
+ * @version 17.05.21 11:52:45
  */
 
 declare(strict_types = 1);
@@ -30,7 +30,7 @@ class IdsValidator extends AbstractValidator
      * @param int[]|string|null $value
      * @return int[]|null если пустой то null
      */
-    public function parseValue($value) : ?array
+    public function parseValue($value): ?array
     {
         // строка через пробелы или запятые
         if (is_scalar($value)) {
@@ -48,7 +48,7 @@ class IdsValidator extends AbstractValidator
 
         $idValidator = new IdValidator();
 
-        foreach ($value as $i => &$val) {
+        foreach ($value as &$val) {
             $val = $idValidator->parseValue($val);
 
             if ($val === null) {
@@ -69,7 +69,7 @@ class IdsValidator extends AbstractValidator
      * @param int[]|string|null $value
      * @return int[] массив id
      */
-    public function filterValue($value) : array
+    public function filterValue($value): array
     {
         // строка через пробелы или запятые
         if (is_scalar($value)) {
@@ -107,7 +107,7 @@ class IdsValidator extends AbstractValidator
      *
      * @param int[]|string|null $value
      */
-    public function formatValue($value) : string
+    public function formatValue($value): string
     {
         $value = $this->parseValue($value);
 
