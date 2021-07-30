@@ -3,7 +3,7 @@
  * @copyright 2019-2021 Dicr http://dicr.org
  * @author Igor A Tarasov <develop@dicr.org>
  * @license MIT
- * @version 17.05.21 11:51:56
+ * @version 31.07.21 02:54:22
  */
 
 declare(strict_types = 1);
@@ -75,7 +75,7 @@ class PhoneValidator extends AbstractValidator
         $phone = preg_replace('~\D+~um', '', $value);
 
         // пустой телефон
-        if ($phone === '' || $phone === '0') {
+        if ((int)$phone === 0) {
             return null;
         }
 

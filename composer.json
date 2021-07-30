@@ -9,7 +9,7 @@
         {
             "name": "Igor Tarasov",
             "email": "develop@dicr.org",
-            "homepage": "http://dicr.org",
+            "homepage": "https://dicr.org",
             "role": "developer"
         }
     ],
@@ -26,7 +26,7 @@
             "dicr\\tests\\": "tests/"
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "rc",
     "prefer-stable": true,
     "require": {
         "php": "~7.4 || ~8.0.1",
