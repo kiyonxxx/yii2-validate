@@ -1,5 +1,5 @@
 {
-    "name": "dicr/yii2-validate",
+    "name": "kiyonxxx/yii2-validate",
     "type": "yii2-extension",
     "license": "GPL-3.0-or-later",
     "description": "Компоненты парсинга и валидации данных для Yii2",
@@ -29,7 +29,7 @@
     "minimum-stability": "RC",
     "prefer-stable": true,
     "require": {
-        "php": "~7.4 || ~8.0.1",
+        "php": ">=7.4",
         "yiisoft/yii2": "~2.0"
     },
     "require-dev": {
